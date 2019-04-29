@@ -1,3 +1,2 @@
-# hello-world
-Hello world new project template.
 # CrazySpark
+An action game
