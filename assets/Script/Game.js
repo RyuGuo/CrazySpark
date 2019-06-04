@@ -12,6 +12,8 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+        score: 0,
+        scoreAdding: 1,
         lineLeft: {
             default: null,
             type: cc.Node
@@ -45,13 +47,34 @@ cc.Class({
         scoreAudio: {
             default: null,
             type: cc.AudioClip
+        },
+        barrier: {
+            default: null,
+            type: cc.Node
         }
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+        this.Player.game = this  //在Player对象中创建一个game指针，这样可以调用Game.js中的方法
+        cc.director.getCollisionManager().enabled = true;
+        cc.director.getCollisionManager().enabledDebugDraw = true; //显示碰撞边框
+    },
 
+    onDisable: function () {
+        cc.director.getCollisionManager().enabled = false;
+        cc.director.getCollisionManager().enabledDebugDraw = false;
+    },
+
+    resetScore() {
+        this.score = 0;
+        this.scoreDisplay.string = 'Score: ' + this.score.toString();
+    },
+
+    gainScore() {
+        this.score += this.scoreAdding;
+        this.scoreDisplay.string = 'Score: ' + this.score.toString();
     },
 
     start () {

@@ -15,7 +15,8 @@ cc.Class({
         position: 0,
         energy: 0,
         jumpDuration: 0.3,
-        energyDecreasingSpeed: 2
+        energyDecreasingSpeed: 2,
+        
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -42,8 +43,13 @@ cc.Class({
         this.jumpAction();
     },
 
+    onCollisionEnter: function (other, self) {
+        this.node.game.resetScore();
+    },
+
     jumpAction() {
         var jump;
+        
         if (this.position == 0) {
             this.position = 1;
             jump = cc.moveBy(this.jumpDuration, cc.v2(360, 0));
@@ -51,8 +57,12 @@ cc.Class({
             this.position=0;
             jump = cc.moveBy(this.jumpDuration, cc.v2(-360, 0));
         }
+        var finished = cc.callFunc(() => {
+            this.node.game.gainScore();
+        }, this);//动作完成后会给玩家加分
 
-        this.node.runAction(jump);
+        var action = cc.sequence(jump,finished)
+        this.node.runAction(action);
     },
 
     start() {
