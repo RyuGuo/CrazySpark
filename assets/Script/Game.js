@@ -43,12 +43,20 @@ cc.Class({
             default: null,
             type: cc.Label
         },
+        energyBar: {
+            default: null,
+            type : cc.ProgressBar
+        },
         // 得分音效资源
         scoreAudio: {
             default: null,
             type: cc.AudioClip
         },
         barrier: {
+            default: null,
+            type: cc.Node
+        },
+        barrier2: {
             default: null,
             type: cc.Node
         }
@@ -72,13 +80,21 @@ cc.Class({
         this.scoreDisplay.string = 'Score: ' + this.score.toString();
     },
 
+    resetEnergyBar() {
+        this.energyBar.progress = 1;
+    },
+
+    updateEnergyBar(progress) {
+        this.energyBar.progress = progress;
+    },
+
     gainScore() {
         this.score += this.scoreAdding;
         this.scoreDisplay.string = 'Score: ' + this.score.toString();
     },
 
     start () {
-
+        this.resetEnergyBar()
     },
 
     // update (dt) {},

@@ -13,10 +13,9 @@ cc.Class({
 
     properties: {
         position: 0,
-        energy: 0,
-        jumpDuration: 0.3,
-        energyDecreasingSpeed: 2,
-        
+        energy: 1,
+        jumpDuration: 0.1,
+        energyDecreasingSpeed: 20
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -44,7 +43,32 @@ cc.Class({
     },
 
     onCollisionEnter: function (other, self) {
-        this.node.game.resetScore();
+        console.log("other",other.node)
+        //console.log("self",self)
+        //var barrier = other.node.getComponent("Barrier")
+        //this.energy -= barrier.energyLoss;
+        //this.node.game.updateEnergyBar(this.energy);
+    },
+
+    resetEnergy(){
+        this.energy = 1;
+    },
+
+    energyDecrease(value) {
+        this.energy -= value;
+        if(this.energy < 0){
+            this.node.game.resetScore();
+            this.energy = 1;
+        }
+        this.node.game.updateEnergyBar(this.energy);
+    },
+
+    energyAdd(value) {
+        this.energy += value;
+        if(this.energy > 1){
+            this.energy = 1;
+        }
+        this.node.game.updateEnergyBar(this.energy);
     },
 
     jumpAction() {
@@ -69,5 +93,7 @@ cc.Class({
 
     },
 
-    // update (dt) {},
+     update (dt) {
+         this.energyDecrease(dt*this.energyDecreasingSpeed);
+     },
 });

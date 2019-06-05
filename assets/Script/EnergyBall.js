@@ -8,14 +8,14 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import {findPlayerNode} from "../Script/config";
+import { findPlayerNode } from "../Script/config";
 
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        moveDuration: 5,
-        energyLoss: 0.2
+        moveDuration: 1,
+        recoveryValue: 0.2
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -26,7 +26,7 @@ cc.Class({
 
     onCollisionEnter(other, self) {
         var player = findPlayerNode().getComponent("Player")
-        player.energyDecrease(this.energyLoss);
+        player.energyAdd(this.recoveryValue);
     },
 
     move() {
