@@ -8,32 +8,16 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
+import { buttonHeight, topHeight, windowWidth } from "./config"
+
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        score: 0,
-        scoreAdding: 1,
-        lineLeft: {
-            default: null,
-            type: cc.Node
-        },
-        lineRight: {
-            default: null,
-            type: cc.Node
-        },
         Player: {
             default: null,
             type: cc.Node
         },
-        // keyboardHint: {
-        //     default: '',
-        //     multiline: true
-        // },
-        // touchHint: {
-        //     default: '',
-        //     multiline: true
-        // },
         gameOverNode: {
             default: null,
             type: cc.Node
@@ -43,79 +27,86 @@ cc.Class({
             default: null,
             type: cc.Label
         },
-        energyBar: {
-            default: null,
-            type: cc.ProgressBar
-        },
         // 得分音效资源
         scoreAudio: {
             default: null,
             type: cc.AudioClip
         },
-        barrier: {
+        fencePrefab: {
             default: null,
             type: cc.Prefab
         },
-        shield: {
+        background1: {
             default: null,
-            type: cc.Prefab
+            type: cc.Node
         },
-        energyBall: {
+        background2: {
             default: null,
-            type: cc.Prefab
+            type: cc.Node
+        },
+        pauseButton: {
+            default: null,
+            type: cc.Button
+        },
+        continueButton: {
+            default: null,
+            type: cc.Button
         }
-
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
+        this.gameTimer = 0
+        this.barrierTimer = 0
+        this.difficult = 1
+        this.gameStatus = true     //true代表游戏运行
+        this.gameMoveNodeArray = []  //需要根据屏幕移动的节点数组
+        this.resetScore()
+
+        this.continueButton.node.active = false
+
         this.Player.game = this  //在Player对象中创建一个game指针，这样可以调用Game.js中的方法
         cc.director.getCollisionManager().enabled = true;
         cc.director.getCollisionManager().enabledDebugDraw = true; //显示碰撞边框
+
+        this.pauseButton.node.on('click', this.onPauseButtonCallBack, this);
+        this.continueButton.node.on('click', this.onContinueButtonCallBack, this);
     },
 
     onDisable: function () {
         cc.director.getCollisionManager().enabled = false;
         cc.director.getCollisionManager().enabledDebugDraw = false;
+        this.pauseButton.node.off('click', this.onPauseButtonCallBack, this);
+        this.continueButton.node.off('click', this.onContinueButtonCallBack, this);
     },
 
-    spawnNewBarrier() {
-        var newBarrier = cc.instantiate(this.barrier);
-        this.node.addChild(newBarrier);
-
-        var randX = (Math.round(Math.random())*2-1) * 180;
-        var Y = 508
-        
-        newBarrier.setPosition(cc.v2(randX, Y));
-        var Barrier = newBarrier.getComponent("Barrier")
-        Barrier.energyLoss = Math.random() * 0.5;
+    onPauseButtonCallBack() {
+        console.log(this.pauseButton)
+        this.pauseButton.node.active = false
+        this.continueButton.node.active = true
+        this.gameStatus = false
+        cc.director.pause()
     },
 
-    spawnNewEnergyBall() {
-        var newEnergyBall = cc.instantiate(this.energyBall);
-        this.node.addChild(newEnergyBall);
-
-        var X = 0
-        var Y = 508
-        
-        newEnergyBall.setPosition(cc.v2(X, Y));
-        var EnergyBall = newEnergyBall.getComponent("EnergyBall")
-        EnergyBall.recoveryValue = Math.random() * 0.5;
+    onContinueButtonCallBack() {
+        console.log(this.continueButton)
+        this.pauseButton.node.active = true
+        this.continueButton.node.active = false
+        this.gameStatus = true
+        cc.director.resume()
     },
 
-    spawnNewShield() {
-        var newShield = cc.instantiate(this.shield);
-        this.node.addChild(newShield);
+    spawnNewFence() {
+        var newFence = cc.instantiate(this.fencePrefab);
+        this.node.addChild(newFence);
 
-        console.log(this.node)
+        var X = windowWidth / 2 + 100
+        var Y = buttonHeight
 
-        var X = 0
-        var Y = 508
-        
-        newShield.setPosition(cc.v2(X, Y));
-        var Shield = newShield.getComponent("Shield")
-        Shield.invincibleTime = Math.random() * 0.5 +2;
+        newFence.setPosition(cc.v2(X, Y));
+
+        this.gameMoveNodeArray.push(newFence);
     },
 
     resetScore() {
@@ -123,46 +114,53 @@ cc.Class({
         this.scoreDisplay.string = 'Score: ' + this.score.toString();
     },
 
-    resetEnergyBar() {
-        this.energyBar.progress = 1;
-    },
-
-    updateEnergyBar(progress) {
-        this.energyBar.progress = progress;
-    },
-
-    gainScore() {
-        this.score += this.scoreAdding;
+    gainScore(value) {
+        this.score += value;
         this.scoreDisplay.string = 'Score: ' + this.score.toString();
     },
 
-    gameOver(){
+    gameOver() {
         console.log("游戏结束")
-
         cc.director.loadScene('game');
     },
 
     start() {
-        this.Player.getComponent("Player").resetEnergy()
-        this.resetEnergyBar()
-        this.schedule(() => {
-            console.log("加载一个Barrier")
-            this.spawnNewBarrier()
-        }, 1)
 
-        this.schedule(()=>{
-            var rand = Math.round(Math.random());
-
-            if(rand === 0){
-                console.log("加载一个能量球")
-                this.spawnNewEnergyBall()
-            }
-            else{
-                console.log("加载一个护盾")
-                this.spawnNewShield()
-            }
-        }, 5)
     },
 
-    // update (dt) {},
+    update(dt) {
+        this.scrollLeftMove(dt, 200)
+
+        this.barrierTimer += dt;
+        this.gameTimer += dt;
+
+        if (this.barrierTimer > 2) {
+            console.log("加载一个Fence")
+            this.spawnNewFence()
+            this.barrierTimer = 0
+        }
+    },
+
+    scrollLeftMove(dt, speed) {
+        //屏幕背景移动
+        this.background1.x -= dt * speed
+        this.background2.x -= dt * speed
+        if (this.background1.x < -windowWidth) {
+            this.background1.x = windowWidth + this.background2.x
+
+        }
+        if (this.background2.x < -windowWidth) {
+            this.background2.x = windowWidth + this.background1.x
+        }
+
+        var i;
+        for (i = 0; i < this.gameMoveNodeArray.length; i++) {
+            this.gameMoveNodeArray[i].x -= dt * speed;
+            if (this.gameMoveNodeArray[i].x < -windowWidth / 2 - 100) {
+                console.log("删除节点", this.gameMoveNodeArray[i])
+                this.gameMoveNodeArray[i].destroy()
+                this.gameMoveNodeArray.splice(i, 1);
+            }
+        }
+    }
 });

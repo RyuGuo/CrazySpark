@@ -8,25 +8,20 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { findPlayerNode,GameItem } from "../Script/config";
+import { Barrier } from "./config"
 
 cc.Class({
-    extends: GameItem,
+    extends: cc.Component,
 
     properties: {
-        recoveryValue: 0.2
+        crashAudio: {
+            default: null,
+            type: cc.AudioClip
+        }
     },
 
-    // LIFE-CYCLE CALLBACKS:
-
-    onLoad () {
-        this.move()
-    },
-
-    onCollisionEnter(other, self) {
-        var player = findPlayerNode().getComponent("Player")
-        player.energyGet(this.recoveryValue);
-        this.node.destroy()
+    onCollisionEnter: function (other, self) {
+        console.log("撞到fence")
     },
 
     start () {

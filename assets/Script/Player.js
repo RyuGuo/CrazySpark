@@ -8,21 +8,22 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
+import { buttonHeight,topHeight } from "./config"
+
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        position: 0,
-        energy: 1,
-        jumpDuration: 0.1,
-        energyDecreasingSpeed: 20,
-        invincibility: false
+        position: 0, //0是下，1是上
+        //energy: 1,
+        jumpDuration: 0.2,
+        //invincibility: false
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
-
+        this.isAction = false
         // 初始化键盘输入监听
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
 
@@ -39,68 +40,30 @@ cc.Class({
     },
 
     onTouchStart() {
-        this.jumpAction();
+        if(!this.isAction && this.node.game.gameStatus){
+            console.log(this.node.game)
+            this.jumpAction();
+        }
     },
 
     onCollisionEnter: function (other, self) {
-        
-    },
-
-    resetEnergy(){
-        this.energy = 1;
-    },
-
-    energyDecrease(value) {
-        this.energy -= value;
-        if(this.energy < 0){
-            //当能量为0时，游戏失败
-            this.node.game.gameOver()
-            //this.node.game.resetScore();
-            //this.energy = 1;
-        }
-        this.node.game.updateEnergyBar(this.energy);
-    },
-
-    energyGet(value) {
-        this.energy += value;
-        if(this.energy > 1){
-            this.energy = 1;
-        }
-        this.node.game.updateEnergyBar(this.energy);
-    },
-
-    invincibilityGet(Time){
-        this.invincibility = true;
-        const decreasingSpeed = this.energyDecreasingSpeed
-
-        //得到护盾，能量减速为0
-        this.energyDecreasingSpeed = 0
-        console.log("护盾获取")
-        this.scheduleOnce(() => {
-            // 这里的 this 指向 component
-            this.energyDecreasingSpeed = decreasingSpeed
-            this.invincibilityLoss()
-        }, Time);
-    },
-
-    invincibilityLoss(){
-        this.invincibility = false;
-        console.log("护盾消失")
+        this.node.game.gameOver()
     },
 
     jumpAction() {
         var jump;
-        
+        this.isAction = true
+        var distans = topHeight-buttonHeight
         if (this.position == 0) {
             this.position = 1;
-            jump = cc.moveBy(this.jumpDuration, cc.v2(360, 0));
+            jump = cc.moveBy(this.jumpDuration, cc.v2(0,distans));
         } else {
             this.position=0;
-            jump = cc.moveBy(this.jumpDuration, cc.v2(-360, 0));
+            jump = cc.moveBy(this.jumpDuration, cc.v2(0,-distans));
         }
         var finished = cc.callFunc(() => {
-            this.node.game.gainScore();
-        }, this);  //动作完成后会给玩家加分
+            this.isAction = false;
+        }, this);
 
         var action = cc.sequence(jump,finished)
         this.node.runAction(action);
@@ -111,6 +74,6 @@ cc.Class({
     },
 
      update (dt) {
-         this.energyDecrease(dt*this.energyDecreasingSpeed);
+         
      },
 });
