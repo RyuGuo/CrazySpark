@@ -14,7 +14,7 @@ cc.Class({
     extends: GameItem,
 
     properties: {
-        recoveryValue: 0.2
+        invincibleTime: 3
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -25,7 +25,7 @@ cc.Class({
 
     onCollisionEnter(other, self) {
         var player = findPlayerNode().getComponent("Player")
-        player.energyGet(this.recoveryValue);
+        player.invincibilityGet(this.invincibleTime)
         this.node.destroy()
     },
 

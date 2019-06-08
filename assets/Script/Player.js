@@ -15,7 +15,8 @@ cc.Class({
         position: 0,
         energy: 1,
         jumpDuration: 0.1,
-        energyDecreasingSpeed: 20
+        energyDecreasingSpeed: 20,
+        invincibility: false
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -38,16 +39,11 @@ cc.Class({
     },
 
     onTouchStart() {
-        console.log("touch")
         this.jumpAction();
     },
 
     onCollisionEnter: function (other, self) {
-        console.log("other",other.node)
-        //console.log("self",self)
-        //var barrier = other.node.getComponent("Barrier")
-        //this.energy -= barrier.energyLoss;
-        //this.node.game.updateEnergyBar(this.energy);
+        
     },
 
     resetEnergy(){
@@ -57,18 +53,39 @@ cc.Class({
     energyDecrease(value) {
         this.energy -= value;
         if(this.energy < 0){
-            this.node.game.resetScore();
-            this.energy = 1;
+            //当能量为0时，游戏失败
+            this.node.game.gameOver()
+            //this.node.game.resetScore();
+            //this.energy = 1;
         }
         this.node.game.updateEnergyBar(this.energy);
     },
 
-    energyAdd(value) {
+    energyGet(value) {
         this.energy += value;
         if(this.energy > 1){
             this.energy = 1;
         }
         this.node.game.updateEnergyBar(this.energy);
+    },
+
+    invincibilityGet(Time){
+        this.invincibility = true;
+        const decreasingSpeed = this.energyDecreasingSpeed
+
+        //得到护盾，能量减速为0
+        this.energyDecreasingSpeed = 0
+        console.log("护盾获取")
+        this.scheduleOnce(() => {
+            // 这里的 this 指向 component
+            this.energyDecreasingSpeed = decreasingSpeed
+            this.invincibilityLoss()
+        }, Time);
+    },
+
+    invincibilityLoss(){
+        this.invincibility = false;
+        console.log("护盾消失")
     },
 
     jumpAction() {
@@ -83,7 +100,7 @@ cc.Class({
         }
         var finished = cc.callFunc(() => {
             this.node.game.gainScore();
-        }, this);//动作完成后会给玩家加分
+        }, this);  //动作完成后会给玩家加分
 
         var action = cc.sequence(jump,finished)
         this.node.runAction(action);
