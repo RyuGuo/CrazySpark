@@ -8,7 +8,7 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { buttonHeight, topHeight, windowWidth } from "./config"
+import { buttonHeight, topHeight, windowWidth,rattanCenterPadding } from "./config"
 
 cc.Class({
     extends: cc.Component,
@@ -22,6 +22,10 @@ cc.Class({
             default: null,
             type: cc.Node
         },
+        pauseBoardNode: {
+            default: null,
+            type: cc.Node
+        } ,
         // score label 的引用
         scoreDisplay: {
             default: null,
@@ -44,11 +48,23 @@ cc.Class({
             default: null,
             type: cc.Node
         },
-        pauseButton: {
+        rattan1: {
             default: null,
-            type: cc.Button
+            type: cc.Node
         },
-        continueButton: {
+        rattan2: {
+            default: null,
+            type: cc.Node
+        },
+        rattan3: {
+            default: null,
+            type: cc.Node
+        },
+        rattan4: {
+            default: null,
+            type: cc.Node
+        },
+        pauseButton: {
             default: null,
             type: cc.Button
         }
@@ -62,39 +78,35 @@ cc.Class({
         this.difficult = 1
         this.gameStatus = true     //true代表游戏运行
         this.gameMoveNodeArray = []  //需要根据屏幕移动的节点数组
-        this.resetScore()
+        this.rattans = [this.rattan1,this.rattan2,this.rattan3,this.rattan4]
 
-        this.continueButton.node.active = false
-
+        console.log(this.rattans)
+        
         this.Player.game = this  //在Player对象中创建一个game指针，这样可以调用Game.js中的方法
+        this.pauseBoardNode.game =this
+
+        this.resetScore()
+        this.pauseBoardNode.active = false
+        this.pauseButton.node.on('click', this.onPauseButtonCallBack, this);
+
         cc.director.getCollisionManager().enabled = true;
         cc.director.getCollisionManager().enabledDebugDraw = true; //显示碰撞边框
-
-        this.pauseButton.node.on('click', this.onPauseButtonCallBack, this);
-        this.continueButton.node.on('click', this.onContinueButtonCallBack, this);
     },
 
     onDisable: function () {
         cc.director.getCollisionManager().enabled = false;
         cc.director.getCollisionManager().enabledDebugDraw = false;
         this.pauseButton.node.off('click', this.onPauseButtonCallBack, this);
-        this.continueButton.node.off('click', this.onContinueButtonCallBack, this);
     },
 
     onPauseButtonCallBack() {
         console.log(this.pauseButton)
         this.pauseButton.node.active = false
-        this.continueButton.node.active = true
+        this.pauseBoardNode.active = true
+        //防止多次点击后失效
+        this.pauseBoardNode.getComponent("PauseBoard").onLoad()
         this.gameStatus = false
         cc.director.pause()
-    },
-
-    onContinueButtonCallBack() {
-        console.log(this.continueButton)
-        this.pauseButton.node.active = true
-        this.continueButton.node.active = false
-        this.gameStatus = true
-        cc.director.resume()
     },
 
     spawnNewFence() {
@@ -125,7 +137,8 @@ cc.Class({
     },
 
     start() {
-
+        //在start初始化节点，onLoad中不可以关于节点的初始化
+        
     },
 
     update(dt) {
@@ -147,13 +160,19 @@ cc.Class({
         this.background2.x -= dt * speed
         if (this.background1.x < -windowWidth) {
             this.background1.x = windowWidth + this.background2.x
-
         }
         if (this.background2.x < -windowWidth) {
             this.background2.x = windowWidth + this.background1.x
         }
 
         var i;
+        for(i=0;i<4;i++){
+            this.rattans[i].x -= dt * speed;
+            if (this.rattans[i].x < -996) {
+                this.rattans[i].x = 996
+            }
+        }
+
         for (i = 0; i < this.gameMoveNodeArray.length; i++) {
             this.gameMoveNodeArray[i].x -= dt * speed;
             if (this.gameMoveNodeArray[i].x < -windowWidth / 2 - 100) {

@@ -25,7 +25,7 @@ cc.Class({
     onLoad() {
         this.isAction = false
         // 初始化键盘输入监听
-        cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
+        //cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
 
         var touchReceiver = cc.Canvas.instance.node;
         touchReceiver.on('touchstart', this.onTouchStart, this);
@@ -41,7 +41,6 @@ cc.Class({
 
     onTouchStart() {
         if(!this.isAction && this.node.game.gameStatus){
-            console.log(this.node.game)
             this.jumpAction();
         }
     },

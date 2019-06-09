@@ -5,6 +5,7 @@ export function findPlayerNode() {
 export const buttonHeight = -222;
 export const topHeight = 40;
 export const windowWidth = 1354;
+export const rattanCenterPadding = 556;
 
 export const Barrier = cc.Class({
   extends: cc.Component,
