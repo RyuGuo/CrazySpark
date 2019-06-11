@@ -29,7 +29,7 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        console.log(this)
+        //console.log(this)
         this.continueButton.node.on('click', this.onContinueButtonCallBack, this);
         this.resumeButton.node.on('click', this.onResumeButtonCallBack, this);
         this.gobackButton.node.on('click', this.onGobackButtonnCallBack, this);
@@ -53,7 +53,7 @@ cc.Class({
         cc.director.resume() /* 结束暂停状态 */
     },
     onGobackButtonnCallBack(){
-
+        cc.director.loadScene("index")
     },
 
     start () {

@@ -64,6 +64,8 @@ cc.Class({
             this.isAction = false;
         }, this);
 
+        this.node.getComponent("AudioControl").onJumpAudioPlay()
+
         var action = cc.sequence(jump,finished)
         this.node.runAction(action);
     },
