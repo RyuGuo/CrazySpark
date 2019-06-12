@@ -42,8 +42,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 883,
-      "height": 529
+      "width": 422,
+      "height": 131
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -52,14 +52,14 @@
     },
     "_position": {
       "__type__": "cc.Vec3",
-      "x": 1154,
-      "y": 121,
+      "x": 1172,
+      "y": 113,
       "z": 0
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.19,
-      "y": 0.19,
+      "x": 0.65,
+      "y": 0.65,
       "z": 1
     },
     "_rotationX": 0,
@@ -88,10 +88,10 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "c0f681ed-8117-4d40-a3b1-489c73a9a6f4"
+      "__uuid__": "d5175112-d922-48fa-b7a4-2c237ad5ceb7"
     },
     "_type": 0,
-    "_sizeMode": 1,
+    "_sizeMode": 0,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -102,7 +102,9 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "e0918c5b-b91a-4200-b2d7-8470a4b98dbc"
+    },
     "_id": ""
   },
   {
@@ -122,43 +124,33 @@
     "points": [
       {
         "__type__": "cc.Vec2",
-        "x": -397.7,
-        "y": -77.8
+        "x": 12.9,
+        "y": 48
       },
       {
         "__type__": "cc.Vec2",
-        "x": 25.9,
-        "y": -187
+        "x": -102.8,
+        "y": 37.7
       },
       {
         "__type__": "cc.Vec2",
-        "x": 298.5,
-        "y": -145.4
+        "x": -87.9,
+        "y": -29.9
       },
       {
         "__type__": "cc.Vec2",
-        "x": 423.9,
-        "y": -38
+        "x": 17.6,
+        "y": -44.5
       },
       {
         "__type__": "cc.Vec2",
-        "x": 347.3,
-        "y": 95.1
+        "x": 195.1,
+        "y": -21.6
       },
       {
         "__type__": "cc.Vec2",
-        "x": 196.2,
-        "y": 145.3
-      },
-      {
-        "__type__": "cc.Vec2",
-        "x": -245.1,
-        "y": 136.2
-      },
-      {
-        "__type__": "cc.Vec2",
-        "x": -395.3,
-        "y": 49.3
+        "x": 194.3,
+        "y": 21.1
       }
     ],
     "_id": ""
@@ -180,9 +172,9 @@
       "__id__": 1
     },
     "asset": {
-      "__uuid__": "d9839c90-5821-45de-aa0e-e68436340121"
+      "__uuid__": "373e665f-0899-4d38-9411-dfb5833c95a5"
     },
-    "fileId": "d5cuFkLE5OtLIWePEpmVYp",
+    "fileId": "c3cfR8cwlEKrIr7Z99YKgy",
     "sync": false
   }
 ]

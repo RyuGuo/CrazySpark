@@ -92,12 +92,14 @@ cc.Class({
         this.gameStatus = true     //true代表游戏运行
         this.gameMoveNodeArray = []  //需要根据屏幕移动的节点数组
         this.Player.zIndex = 20
-        this.pauseBoardNode.zIndex = 99
+        this.pauseBoardNode.zIndex = 70
+        this.gameOverNode.zIndex = 71
 
         this.Player.game = this  //在Player对象中创建一个game指针，这样可以调用Game.js中的方法
         this.pauseBoardNode.game = this
 
         this.resetScore()
+        this.gameOverNode.active = false
         this.pauseBoardNode.active = false
         this.pauseButton.node.on('click', this.onPauseButtonCallBack, this);
 
@@ -124,11 +126,10 @@ cc.Class({
     spawnNewBarrier(prefab, Xposition, Yposition) {
         var newPrefabNode = cc.instantiate(prefab);
         this.node.addChild(newPrefabNode);
-        var X = windowWidth / 2 + 100
-        var Y = buttonHeight
         newPrefabNode.setPosition(cc.v2(Xposition, Yposition));
         newPrefabNode.zIndex = this.rattan1 + 1;
         this.gameMoveNodeArray.push(newPrefabNode);
+        return newPrefabNode
     },
 
     resetScore() {
@@ -145,8 +146,11 @@ cc.Class({
         console.log("游戏结束")
         this.pauseButton.node.active = false
         this.pauseBoardNode.active = true
+        this.gameOverNode.active = true
         //防止多次点击后失效
-        this.pauseBoardNode.getComponent("PauseBoard").onLoad()
+        let pauseNodeScript = this.pauseBoardNode.getComponent("PauseBoard")
+        pauseNodeScript.onLoad()
+        pauseNodeScript.continueButton.node.active = false
         this.gameStatus = false
         cc.director.pause()
     },
@@ -164,7 +168,7 @@ cc.Class({
         //this.gameTimer += dt;
         this.gainScore(this.speed * dt / 10)
 
-        if (this.barrierTimer > 400) {
+        if (this.barrierTimer > 600) {
             var s = rnd(1, 6)
             switch (s) {
                 case barrierType.fence:
@@ -189,7 +193,8 @@ cc.Class({
                     break;
                 case barrierType.web:
                     console.log("加载一个web")
-                    this.spawnNewBarrier(this.webPrefab, windowWidth / 2 + 100, topHeight - 17.1)
+                    let newWebNode =  this.spawnNewBarrier(this.webPrefab, windowWidth / 2 + 100, buttonHeight+40)
+                    newWebNode.getComponent("Web").emit()
                     break;
                 default:
                     break;

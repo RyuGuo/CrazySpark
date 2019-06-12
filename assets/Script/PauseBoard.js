@@ -30,6 +30,7 @@ cc.Class({
 
     onLoad () {
         //console.log(this)
+        this.continueButton.node.active = true
         this.continueButton.node.on('click', this.onContinueButtonCallBack, this);
         this.resumeButton.node.on('click', this.onResumeButtonCallBack, this);
         this.gobackButton.node.on('click', this.onGobackButtonnCallBack, this);

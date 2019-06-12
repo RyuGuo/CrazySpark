@@ -13,5 +13,6 @@ export const barrierType = {
   'lasso': 3,
   'steeltrap': 4,
   'web': 5,
-  'snake': 6
+  'snake': 6,
+  'littlesnake': 7
 }
