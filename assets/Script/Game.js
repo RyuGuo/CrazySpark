@@ -61,6 +61,10 @@ cc.Class({
             default: null,
             type: cc.Prefab
         },
+        littleSnakePrefab: {
+            default: null,
+            type: cc.Prefab
+        },
         background1: {
             default: null,
             type: cc.Node
@@ -150,7 +154,7 @@ cc.Class({
         //防止多次点击后失效
         let pauseNodeScript = this.pauseBoardNode.getComponent("PauseBoard")
         pauseNodeScript.onLoad()
-        pauseNodeScript.continueButton.node.active = false
+        pauseNodeScript.continueButton.node.active = false /* 将continue按钮隐藏 */
         this.gameStatus = false
         cc.director.pause()
     },
@@ -169,7 +173,7 @@ cc.Class({
         this.gainScore(this.speed * dt / 10)
 
         if (this.barrierTimer > 600) {
-            var s = rnd(1, 6)
+            var s = rnd(1, 7)
             switch (s) {
                 case barrierType.fence:
                     console.log("加载一个Fence")
@@ -181,7 +185,7 @@ cc.Class({
                     break;
                 case barrierType.groundhole:
                     console.log("加载一个groundhole")
-                    this.spawnNewBarrier(this.groundholePrefab, windowWidth / 2 + 100, buttonHeight-20)
+                    this.spawnNewBarrier(this.groundholePrefab, windowWidth / 2 + 100, buttonHeight - 20)
                     break;
                 case barrierType.lasso:
                     console.log("加载一个lasso")
@@ -193,9 +197,13 @@ cc.Class({
                     break;
                 case barrierType.web:
                     console.log("加载一个web")
-                    let newWebNode =  this.spawnNewBarrier(this.webPrefab, windowWidth / 2 + 100, buttonHeight+40)
-                    newWebNode.getComponent("Web").emit()
+                    let newWebNode = this.spawnNewBarrier(this.webPrefab, windowWidth / 2 + 100, buttonHeight + 40)
+                    newWebNode.getComponent("EmitBarrier").emit()
                     break;
+                case barrierType.littlesnake:
+                    console.log("加载一个little snake")
+                    let newLittleSnakeNode = this.spawnNewBarrier(this.littleSnakePrefab, windowWidth / 2 + 100, topHeight)
+                    newLittleSnakeNode.getComponent("EmitBarrier").emit()
                 default:
                     break;
             }

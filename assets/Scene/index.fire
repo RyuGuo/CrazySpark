@@ -41,8 +41,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.5930460672082718,
-      "y": 0.5930460672082718,
+      "x": 0.7295416666666666,
+      "y": 0.7295416666666666,
       "z": 1
     },
     "_quat": {
@@ -518,7 +518,7 @@
     "_skewY": 0,
     "_zIndex": 0,
     "groupIndex": 0,
-    "_id": "94o9Cke6tE7Yq+pqPFkg1w"
+    "_id": "df3kaKsuxGt5stTyP8gvpb"
   },
   {
     "__type__": "cc.Label",
@@ -544,7 +544,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "黑体",
     "_N$overflow": 0,
-    "_id": "02U5nIyX1F55QkqmsoKBA7"
+    "_id": "bfdavuwydB5rwKCFR2HyYs"
   },
   {
     "__type__": "cc.LabelOutline",
@@ -562,7 +562,7 @@
       "a": 255
     },
     "_width": 4,
-    "_id": "57QBOmxL5KY6HwoRZEehpl"
+    "_id": "70CpWsG6hL7p2vUbb+IaGp"
   },
   {
     "__type__": "cc.RichText",
@@ -711,7 +711,7 @@
     "_skewY": 0,
     "_zIndex": 0,
     "groupIndex": 0,
-    "_id": "23+r9/2JtOzpfn7L3rISrb"
+    "_id": "96o7pstdpABIUgqNbyrJTP"
   },
   {
     "__type__": "cc.Label",
@@ -737,7 +737,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "幼圆",
     "_N$overflow": 0,
-    "_id": "9dYf9Y5BRJ9YBfXi8qw9aj"
+    "_id": "2dKYPiGbhLm7wOkUV3CqLa"
   },
   {
     "__type__": "cc.LabelOutline",
@@ -755,7 +755,7 @@
       "a": 255
     },
     "_width": 4,
-    "_id": "919xGBFWlN3LLmIF7eIMji"
+    "_id": "7bTu6IzERI35gGDpU+alX9"
   },
   {
     "__type__": "cc.RichText",
@@ -1777,7 +1777,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": -70,
+      "width": 70,
       "height": 106
     },
     "_anchorPoint": {
@@ -1823,7 +1823,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "50051c54-4022-43a5-9319-4048f5f2d1eb"
+      "__uuid__": "7571749c-5e47-4b84-94cd-05797cb60959"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -1837,7 +1837,9 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_state": 0,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "35bda216-25a0-466a-942e-d3ed9a554eb5"
+    },
     "_id": "a0nqC/yLhExIjiWrQ9U70C"
   },
   {
