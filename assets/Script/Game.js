@@ -8,13 +8,17 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { buttonHeight, topHeight, windowWidth, barrierType } from "./config"
-import { rnd } from "./utils"
+import {
+    buttonHeight, topHeight, windowWidth, barrierType
+} from "./config"
+import { rnd,spawnNewNode,getNodeFromPrefabPool } from "./utils"
 
 cc.Class({
     extends: cc.Component,
 
     properties: {
+        difficult: 1000,
+        bonusDuration: 200,
         Player: {
             default: null,
             type: cc.Node
@@ -61,6 +65,10 @@ cc.Class({
             default: null,
             type: cc.Prefab
         },
+        banannaPrefab: {
+            default: null,
+            type: cc.Prefab
+        },
         littleSnakePrefab: {
             default: null,
             type: cc.Prefab
@@ -92,7 +100,7 @@ cc.Class({
     onLoad() {
         this.gameTimer = 0
         this.barrierTimer = 0
-        this.difficult = 1
+        this.banannaTimer = 0
         this.gameStatus = true     //true代表游戏运行
         this.gameMoveNodeArray = []  //需要根据屏幕移动的节点数组
         this.Player.zIndex = 20
@@ -103,12 +111,25 @@ cc.Class({
         this.pauseBoardNode.game = this
 
         this.resetScore()
+        this.initBanannaPrefabPool()
         this.gameOverNode.active = false
         this.pauseBoardNode.active = false
         this.pauseButton.node.on('click', this.onPauseButtonCallBack, this);
 
         cc.director.getCollisionManager().enabled = true;
         cc.director.getCollisionManager().enabledDebugDraw = true; //显示碰撞边框
+    },
+
+    initBanannaPrefabPool() {
+        if (this.banannaPrefabPool) {
+            return;
+        }
+        this.banannaPrefabPool = new cc.NodePool();
+        let initCount = 5;
+        for (let i = 0; i < initCount; ++i) {
+            let bananna = cc.instantiate(this.banannaPrefab); // 创建节点
+            this.banannaPrefabPool.put(bananna); // 通过 put 接口放入对象池
+        }
     },
 
     onDisable: function () {
@@ -128,12 +149,19 @@ cc.Class({
     },
 
     spawnNewBarrier(prefab, Xposition, Yposition) {
-        var newPrefabNode = cc.instantiate(prefab);
-        this.node.addChild(newPrefabNode);
-        newPrefabNode.setPosition(cc.v2(Xposition, Yposition));
+        var newPrefabNode = spawnNewNode(this.node, prefab, Xposition, Yposition)
         newPrefabNode.zIndex = this.rattan1 + 1;
         this.gameMoveNodeArray.push(newPrefabNode);
         return newPrefabNode
+    },
+
+    getBanannaFromPrefabPool() {
+        let X = windowWidth / 2 + 100
+        let Y = (rnd(0, 1) === 0) ? topHeight : buttonHeight
+        let bananna = getNodeFromPrefabPool(this.banannaPrefabPool, this.banannaPrefab, X, Y)
+        bananna.zIndex = this.rattan1 + 1;
+        this.gameMoveNodeArray.push(bananna);
+        return bananna;
     },
 
     resetScore() {
@@ -144,6 +172,18 @@ cc.Class({
     gainScore(value) {
         this.score += value;
         this.scoreDisplay.string = 'Score: ' + (parseInt(this.score)).toString();
+    },
+
+    destroyNodeFormMoveArray(node, i) {
+        node.destroy();
+        if (i < 0) {
+            for (i = 0; i < this.gameMoveNodeArray.length; i++) {
+                if (this.gameMoveNodeArray[i].active === false) {
+                    break;
+                }
+            }
+        }
+        this.gameMoveNodeArray.splice(i, 1)
     },
 
     gameOver() {
@@ -159,6 +199,43 @@ cc.Class({
         cc.director.pause()
     },
 
+    spawnRandomBarrier() {
+        var s = rnd(1, 7)
+        switch (s) {
+            case barrierType.fence:
+                console.log("加载一个Fence")
+                this.spawnNewBarrier(this.fencePrefab, windowWidth / 2 + 100, buttonHeight)
+                break;
+            case barrierType.snake:
+                console.log("加载一个Snake")
+                this.spawnNewBarrier(this.snakePrefab, windowWidth / 2 + 100, topHeight - 17.1)
+                break;
+            case barrierType.groundhole:
+                console.log("加载一个groundhole")
+                this.spawnNewBarrier(this.groundholePrefab, windowWidth / 2 + 100, buttonHeight - 20)
+                break;
+            case barrierType.lasso:
+                console.log("加载一个lasso")
+                this.spawnNewBarrier(this.lassoPrefab, windowWidth / 2 + 100, topHeight - 17.1)
+                break;
+            case barrierType.steeltrap:
+                console.log("加载一个steeltrap")
+                this.spawnNewBarrier(this.steeltrapPrefab, windowWidth / 2 + 100, buttonHeight)
+                break;
+            case barrierType.web:
+                console.log("加载一个web")
+                let newWebNode = this.spawnNewBarrier(this.webPrefab, windowWidth / 2 + 100, buttonHeight + 40)
+                newWebNode.getComponent("EmitBarrier").emit()
+                break;
+            case barrierType.littlesnake:
+                console.log("加载一个little snake")
+                let newLittleSnakeNode = this.spawnNewBarrier(this.littleSnakePrefab, windowWidth / 2 + 100, topHeight)
+                newLittleSnakeNode.getComponent("EmitBarrier").emit()
+            default:
+                break;
+        }
+    },
+
     start() {
         //在start初始化节点，onLoad中不可以关于节点的初始化
         this.speed = 200
@@ -168,46 +245,31 @@ cc.Class({
         this.scrollLeftMove(dt, this.speed)
 
         this.barrierTimer += dt * this.speed;
-        this.speed += dt * 20;
-        //this.gameTimer += dt;
-        this.gainScore(this.speed * dt / 10)
+        this.banannaTimer += dt * this.speed;
 
-        if (this.barrierTimer > 600) {
-            var s = rnd(1, 7)
-            switch (s) {
-                case barrierType.fence:
-                    console.log("加载一个Fence")
-                    this.spawnNewBarrier(this.fencePrefab, windowWidth / 2 + 100, buttonHeight)
-                    break;
-                case barrierType.snake:
-                    console.log("加载一个Snake")
-                    this.spawnNewBarrier(this.snakePrefab, windowWidth / 2 + 100, topHeight - 17.1)
-                    break;
-                case barrierType.groundhole:
-                    console.log("加载一个groundhole")
-                    this.spawnNewBarrier(this.groundholePrefab, windowWidth / 2 + 100, buttonHeight - 20)
-                    break;
-                case barrierType.lasso:
-                    console.log("加载一个lasso")
-                    this.spawnNewBarrier(this.lassoPrefab, windowWidth / 2 + 100, topHeight - 17.1)
-                    break;
-                case barrierType.steeltrap:
-                    console.log("加载一个steeltrap")
-                    this.spawnNewBarrier(this.steeltrapPrefab, windowWidth / 2 + 100, buttonHeight)
-                    break;
-                case barrierType.web:
-                    console.log("加载一个web")
-                    let newWebNode = this.spawnNewBarrier(this.webPrefab, windowWidth / 2 + 100, buttonHeight + 40)
-                    newWebNode.getComponent("EmitBarrier").emit()
-                    break;
-                case barrierType.littlesnake:
-                    console.log("加载一个little snake")
-                    let newLittleSnakeNode = this.spawnNewBarrier(this.littleSnakePrefab, windowWidth / 2 + 100, topHeight)
-                    newLittleSnakeNode.getComponent("EmitBarrier").emit()
-                default:
-                    break;
-            }
+        this.speed += dt * 20;
+        this.gainScore(this.speed * dt / 20)
+
+        if (this.barrierTimer > this.difficult) {
+            this.spawnRandomBarrier()
             this.barrierTimer = 0
+            this.banannaTimer = 0
+        } else if (this.banannaTimer > this.bonusDuration) {
+
+            let bananna = null;
+            if (this.banannaPrefabPool.size() > 0) { // 通过 size 接口判断对象池中是否有空闲的对象
+                bananna = this.banannaPrefabPool.get();
+            } else { // 如果没有空闲对象，也就是对象池中备用对象不够时，我们就用 cc.instantiate 重新创建
+                bananna = cc.instantiate(this.banannaPrefab);
+            }
+            this.node.addChild(bananna);
+
+            bananna.setPosition(cc.v2(windowWidth / 2 + 100, (rnd(0, 1) === 0) ? topHeight : buttonHeight));
+            bananna.zIndex = this.rattan1 + 1;
+
+            console.log("生成香蕉", bananna)
+            this.gameMoveNodeArray.push(bananna);
+            this.banannaTimer = 0
         }
     },
 
@@ -235,9 +297,8 @@ cc.Class({
         for (i = 0; i < this.gameMoveNodeArray.length; i++) {
             this.gameMoveNodeArray[i].x -= dt * speed;
             if (this.gameMoveNodeArray[i].x < -windowWidth / 2 - 100) {
-                this.gameMoveNodeArray[i].destroy()
-                this.gameMoveNodeArray.splice(i, 1);
                 console.log("删除节点", this.gameMoveNodeArray[i])
+                this.destroyNodeFormMoveArray(this.gameMoveNodeArray[i], i)
                 i--;
             }
         }

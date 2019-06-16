@@ -46,7 +46,13 @@ cc.Class({
     },
 
     onCollisionEnter: function (other, self) {
-        this.node.game.gameOver()
+        if(other.node.name === 'bananna'){
+            console.log("吃到")
+            this.node.game.gainScore(10)
+            this.node.game.destroyNodeFormMoveArray(other.node,-1)
+        } else{
+            this.node.game.gameOver()
+        }
     },
 
     jumpAction() {

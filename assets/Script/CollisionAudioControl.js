@@ -22,7 +22,6 @@ cc.Class({
 
     onCollisionEnter(other, self) {
         if (other.node.name === 'monkey') {
-            console.log("撞到", other)
             this.current = cc.audioEngine.play(this.crashAudio, false, 1);
         }
     },

@@ -15,9 +15,6 @@
     "_children": [
       {
         "__id__": 2
-      },
-      {
-        "__id__": 46
       }
     ],
     "_active": false,
@@ -44,8 +41,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 4.5474642084252235,
-      "y": 4.5474642084252235,
+      "x": 3.2042795103584845,
+      "y": 3.2042795103584845,
       "z": 1
     },
     "_quat": {
@@ -1087,48 +1084,58 @@
     "points": [
       {
         "__type__": "cc.Vec2",
-        "x": 34.8,
-        "y": -11.3
+        "x": 33.3,
+        "y": -10.3
       },
       {
         "__type__": "cc.Vec2",
-        "x": 24.8,
-        "y": 46.5
-      },
-      {
-        "__type__": "cc.Vec2",
-        "x": -15.1,
-        "y": 47.6
-      },
-      {
-        "__type__": "cc.Vec2",
-        "x": -32.2,
-        "y": 30.2
-      },
-      {
-        "__type__": "cc.Vec2",
-        "x": -34.7,
-        "y": -3.3
-      },
-      {
-        "__type__": "cc.Vec2",
-        "x": -7.3,
-        "y": -27.5
-      },
-      {
-        "__type__": "cc.Vec2",
-        "x": -6.6,
-        "y": -51.5
+        "x": 27.3,
+        "y": 31.5
       },
       {
         "__type__": "cc.Vec2",
         "x": 11.5,
-        "y": -51.2
+        "y": 46
       },
       {
         "__type__": "cc.Vec2",
-        "x": 11.7,
-        "y": -22.5
+        "x": -14.9,
+        "y": 45.4
+      },
+      {
+        "__type__": "cc.Vec2",
+        "x": -29.3,
+        "y": 28.7
+      },
+      {
+        "__type__": "cc.Vec2",
+        "x": -32.5,
+        "y": -2.6
+      },
+      {
+        "__type__": "cc.Vec2",
+        "x": -7.6,
+        "y": -32.1
+      },
+      {
+        "__type__": "cc.Vec2",
+        "x": -3.7,
+        "y": -49.9
+      },
+      {
+        "__type__": "cc.Vec2",
+        "x": 3.1,
+        "y": -49.6
+      },
+      {
+        "__type__": "cc.Vec2",
+        "x": 12.9,
+        "y": -39.3
+      },
+      {
+        "__type__": "cc.Vec2",
+        "x": 11.3,
+        "y": -25.1
       }
     ],
     "_id": "30MgBVtn5DSIBX7DvJiKzv"
@@ -1822,7 +1829,7 @@
         "__id__": 40
       }
     ],
-    "_active": true,
+    "_active": false,
     "_level": 2,
     "_components": [
       {
@@ -1879,9 +1886,11 @@
     "__type__": "cc.PrivateNode",
     "_name": "RICHTEXT_CHILD",
     "_objFlags": 0,
-    "_parent": null,
+    "_parent": {
+      "__id__": 39
+    },
     "_children": [],
-    "_active": true,
+    "_active": false,
     "_level": 3,
     "_components": [
       {
@@ -1933,9 +1942,9 @@
     },
     "_skewX": 0,
     "_skewY": 0,
-    "_zIndex": 0,
+    "_zIndex": -32768,
     "groupIndex": 0,
-    "_id": "1bu5e5WXdM/bOhI5Q8/p0l"
+    "_id": "d8KQuA4HxCUJ2Exh5mCiCN"
   },
   {
     "__type__": "cc.Label",
@@ -1961,7 +1970,7 @@
     "_N$verticalAlign": 1,
     "_N$fontFamily": "幼圆",
     "_N$overflow": 0,
-    "_id": "96RuHz2/NLNrY9NZILtmn3"
+    "_id": "b0t6bOfEBFCKt7znY7aEZ4"
   },
   {
     "__type__": "cc.LabelOutline",
@@ -1979,7 +1988,7 @@
       "a": 255
     },
     "_width": 4,
-    "_id": "a2W9LVG9hNe68DoSZ9G255"
+    "_id": "46otyZ9PRPtLR2cK1Xqg1S"
   },
   {
     "__type__": "cc.RichText",
@@ -2026,6 +2035,8 @@
       "__id__": 2
     },
     "_enabled": true,
+    "difficult": 1000,
+    "bonusDuration": 200,
     "Player": {
       "__id__": 21
     },
@@ -2057,7 +2068,12 @@
     "groundholePrefab": {
       "__uuid__": "373e665f-0899-4d38-9411-dfb5833c95a5"
     },
-    "littleSnakePrefab": null,
+    "banannaPrefab": {
+      "__uuid__": "eb2d4100-9f99-426d-ae00-7f67351a10a0"
+    },
+    "littleSnakePrefab": {
+      "__uuid__": "350e9460-e4f2-4a24-bb3f-1e5f1c72b83d"
+    },
     "background1": {
       "__id__": 6
     },
@@ -2074,133 +2090,5 @@
       "__id__": 16
     },
     "_id": "e7+uC7BZZG/qCRM3DkUV8e"
-  },
-  {
-    "__type__": "cc.Node",
-    "_name": "little snake",
-    "_objFlags": 0,
-    "_parent": {
-      "__id__": 1
-    },
-    "_children": [],
-    "_active": true,
-    "_level": 1,
-    "_components": [
-      {
-        "__id__": 47
-      },
-      {
-        "__id__": 48
-      }
-    ],
-    "_prefab": {
-      "__id__": 49
-    },
-    "_opacity": 255,
-    "_color": {
-      "__type__": "cc.Color",
-      "r": 255,
-      "g": 255,
-      "b": 255,
-      "a": 255
-    },
-    "_contentSize": {
-      "__type__": "cc.Size",
-      "width": 151,
-      "height": 61
-    },
-    "_anchorPoint": {
-      "__type__": "cc.Vec2",
-      "x": 0.5,
-      "y": 0.5
-    },
-    "_position": {
-      "__type__": "cc.Vec3",
-      "x": 919,
-      "y": 415,
-      "z": 0
-    },
-    "_scale": {
-      "__type__": "cc.Vec3",
-      "x": 1,
-      "y": 1,
-      "z": 1
-    },
-    "_rotationX": 0,
-    "_rotationY": 0,
-    "_quat": {
-      "__type__": "cc.Quat",
-      "x": 0,
-      "y": 0,
-      "z": 0,
-      "w": 1
-    },
-    "_skewX": 0,
-    "_skewY": 0,
-    "_zIndex": 0,
-    "groupIndex": 0,
-    "_id": "92LYONIPVG55GitPUFPfm3"
-  },
-  {
-    "__type__": "cc.Sprite",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 46
-    },
-    "_enabled": true,
-    "_srcBlendFactor": 770,
-    "_dstBlendFactor": 771,
-    "_spriteFrame": {
-      "__uuid__": "4e1ad083-9cf8-4b90-8839-70893d990c28"
-    },
-    "_type": 0,
-    "_sizeMode": 1,
-    "_fillType": 0,
-    "_fillCenter": {
-      "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
-    },
-    "_fillStart": 0,
-    "_fillRange": 0,
-    "_isTrimmedMode": true,
-    "_state": 0,
-    "_atlas": {
-      "__uuid__": "e0918c5b-b91a-4200-b2d7-8470a4b98dbc"
-    },
-    "_id": "46JIHPdZlAKqMOjSuIRhGr"
-  },
-  {
-    "__type__": "cc.BoxCollider",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 46
-    },
-    "_enabled": true,
-    "tag": 0,
-    "_offset": {
-      "__type__": "cc.Vec2",
-      "x": -0.3,
-      "y": 6
-    },
-    "_size": {
-      "__type__": "cc.Size",
-      "width": 145.5,
-      "height": 42.5
-    },
-    "_id": "4eT6vkoS5IVJuRGlFYC0N+"
-  },
-  {
-    "__type__": "cc.PrefabInfo",
-    "root": {
-      "__id__": 46
-    },
-    "asset": {
-      "__uuid__": "350e9460-e4f2-4a24-bb3f-1e5f1c72b83d"
-    },
-    "fileId": "92LYONIPVG55GitPUFPfm3",
-    "sync": false
   }
 ]
