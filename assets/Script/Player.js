@@ -8,7 +8,7 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import { buttonHeight,topHeight } from "./config"
+import { buttonHeight, topHeight } from "./config"
 
 cc.Class({
     extends: cc.Component,
@@ -16,7 +16,7 @@ cc.Class({
     properties: {
         position: 0, //0是下，1是上
         //energy: 1,
-        jumpDuration: 0.2,
+        jumpDuration: 0.5,
         //invincibility: false
     },
 
@@ -40,17 +40,27 @@ cc.Class({
     },
 
     onTouchStart() {
-        if(!this.isAction && this.node.game.gameStatus){
+        if (!this.isAction && this.node.game.gameStatus) {
             this.jumpAction();
         }
     },
 
     onCollisionEnter: function (other, self) {
-        if(other.node.name === 'bananna'){
-            console.log("吃到")
-            this.node.game.gainScore(10)
-            this.node.game.destroyNodeFormMoveArray(other.node,-1)
-        } else{
+        if (other.node.name === 'bananna') {
+            if (other.node.collisionCounter == 0) {
+                other.node.collisionCounter += 1
+                this.node.game.gainScore(10)
+                this.node.game.removeNodeFormMoveArray(other.node)
+                other.node.getComponent("Bananna").eatBananna()
+            }
+
+        } else {
+            cc.loader.loadRes("猴子失败", cc.SpriteFrame, function (err, spriteFrame) {
+                self.node.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+            });
+            // console.log(this.node.getComponent(cc.Sprite))
+            // spriteFrame.setTexture(texture);
+            // this.node.getComponent(cc.Sprite).SpriteFrame = this.failedSpiritFrame
             this.node.game.gameOver()
         }
     },
@@ -58,13 +68,13 @@ cc.Class({
     jumpAction() {
         var jump;
         this.isAction = true
-        var distans = topHeight-buttonHeight
+        var distans = topHeight + 40 - buttonHeight
         if (this.position == 0) {
             this.position = 1;
-            jump = cc.moveBy(this.jumpDuration, cc.v2(0,distans));
+            jump = cc.moveBy(this.jumpDuration, cc.v2(0, distans));
         } else {
-            this.position=0;
-            jump = cc.moveBy(this.jumpDuration, cc.v2(0,-distans));
+            this.position = 0;
+            jump = cc.moveBy(this.jumpDuration, cc.v2(0, -distans));
         }
         var finished = cc.callFunc(() => {
             this.isAction = false;
@@ -72,7 +82,7 @@ cc.Class({
 
         this.node.getComponent("AudioControl").onJumpAudioPlay()
 
-        var action = cc.sequence(jump,finished)
+        var action = cc.sequence(jump, finished)
         this.node.runAction(action);
     },
 
@@ -80,7 +90,7 @@ cc.Class({
 
     },
 
-     update (dt) {
-         
-     },
+    update(dt) {
+
+    },
 });

@@ -28,7 +28,7 @@ cc.Class({
 
     // LIFE-CYCLE CALLBACKS:
 
-    onLoad () {
+    onLoad() {
         //console.log(this)
         this.continueButton.node.active = true
         this.continueButton.node.on('click', this.onContinueButtonCallBack, this);
@@ -36,7 +36,7 @@ cc.Class({
         this.gobackButton.node.on('click', this.onGobackButtonnCallBack, this);
     },
 
-    onDisable(){
+    onDisable() {
         this.continueButton.node.off('click', this.onContinueButtonCallBack, this);
         this.resumeButton.node.off('click', this.onResumeButtonCallBack, this);
         this.gobackButton.node.off('click', this.onGobackButtonnCallBack, this);
@@ -49,16 +49,33 @@ cc.Class({
         cc.director.resume()
     },
 
-    onResumeButtonCallBack(){
+    onResumeButtonCallBack() {
         cc.director.loadScene('game')
         cc.director.resume() /* 结束暂停状态 */
     },
-    onGobackButtonnCallBack(){
+    onGobackButtonnCallBack() {
         cc.director.loadScene("index")
     },
 
-    start () {
-        
+    buttonDisplayMode(mode) {
+        switch (mode) {
+            case 0:
+                //暂停
+                this.continueButton.node.active = true
+                this.resumeButton.node.x = 15
+                this.gobackButton.node.x = 105
+                break;
+            case 1:
+                //失败
+                this.continueButton.node.active = false;
+                this.resumeButton.node.x = -50
+                this.gobackButton.node.x = 70
+                break;
+        }
+    },
+
+    start() {
+
     },
 
 

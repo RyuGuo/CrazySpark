@@ -7,6 +7,7 @@ export function spawnNewNode(parentNode,prefab, Xposition, Yposition) {
     var newPrefabNode = cc.instantiate(prefab);
     parentNode.addChild(newPrefabNode)
     newPrefabNode.setPosition(cc.v2(Xposition, Yposition));
+    newPrefabNode.collisionCounter = 0
     return newPrefabNode
 }
 

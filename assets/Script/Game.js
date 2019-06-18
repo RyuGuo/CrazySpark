@@ -11,13 +11,14 @@
 import {
     buttonHeight, topHeight, windowWidth, barrierType
 } from "./config"
-import { rnd,spawnNewNode,getNodeFromPrefabPool } from "./utils"
+import { rnd, spawnNewNode, getNodeFromPrefabPool } from "./utils"
 
 cc.Class({
     extends: cc.Component,
 
     properties: {
         difficult: 1000,
+        speedup:   20,
         bonusDuration: 200,
         Player: {
             default: null,
@@ -36,8 +37,7 @@ cc.Class({
             default: null,
             type: cc.Label
         },
-        // 得分音效资源
-        scoreAudio: {
+        gameOverAudio: {
             default: null,
             type: cc.AudioClip
         },
@@ -92,6 +92,10 @@ cc.Class({
         pauseButton: {
             default: null,
             type: cc.Button
+        },
+        meterBoardPrefab: {
+            default:null,
+            type: cc.Prefab
         }
     },
 
@@ -101,7 +105,8 @@ cc.Class({
         this.gameTimer = 0
         this.barrierTimer = 0
         this.banannaTimer = 0
-        this.gameStatus = true     //true代表游戏运行
+        this.meterTimer = 0
+        this.gameStatus = false     //true代表游戏运行，游戏开始等待猴子出场
         this.gameMoveNodeArray = []  //需要根据屏幕移动的节点数组
         this.Player.zIndex = 20
         this.pauseBoardNode.zIndex = 70
@@ -111,7 +116,7 @@ cc.Class({
         this.pauseBoardNode.game = this
 
         this.resetScore()
-        this.initBanannaPrefabPool()
+        //this.initBanannaPrefabPool()
         this.gameOverNode.active = false
         this.pauseBoardNode.active = false
         this.pauseButton.node.on('click', this.onPauseButtonCallBack, this);
@@ -120,17 +125,17 @@ cc.Class({
         cc.director.getCollisionManager().enabledDebugDraw = true; //显示碰撞边框
     },
 
-    initBanannaPrefabPool() {
-        if (this.banannaPrefabPool) {
-            return;
-        }
-        this.banannaPrefabPool = new cc.NodePool();
-        let initCount = 5;
-        for (let i = 0; i < initCount; ++i) {
-            let bananna = cc.instantiate(this.banannaPrefab); // 创建节点
-            this.banannaPrefabPool.put(bananna); // 通过 put 接口放入对象池
-        }
-    },
+    // initBanannaPrefabPool() {
+    //     if (this.banannaPrefabPool) {
+    //         return;
+    //     }
+    //     this.banannaPrefabPool = new cc.NodePool();
+    //     let initCount = 5;
+    //     for (let i = 0; i < initCount; ++i) {
+    //         let bananna = cc.instantiate(this.banannaPrefab); // 创建节点
+    //         this.banannaPrefabPool.put(bananna); // 通过 put 接口放入对象池
+    //     }
+    // },
 
     onDisable: function () {
         cc.director.getCollisionManager().enabled = false;
@@ -139,11 +144,13 @@ cc.Class({
     },
 
     onPauseButtonCallBack() {
-        console.log(this.pauseButton)
+        //console.log(this.pauseButton)
         this.pauseButton.node.active = false
         this.pauseBoardNode.active = true
         //防止多次点击后失效
-        this.pauseBoardNode.getComponent("PauseBoard").onLoad()
+        let pauseBoardNode = this.pauseBoardNode.getComponent("PauseBoard")
+        pauseBoardNode.onLoad()
+        pauseBoardNode.buttonDisplayMode(0)
         this.gameStatus = false
         cc.director.pause()
     },
@@ -155,14 +162,15 @@ cc.Class({
         return newPrefabNode
     },
 
-    getBanannaFromPrefabPool() {
-        let X = windowWidth / 2 + 100
-        let Y = (rnd(0, 1) === 0) ? topHeight : buttonHeight
-        let bananna = getNodeFromPrefabPool(this.banannaPrefabPool, this.banannaPrefab, X, Y)
-        bananna.zIndex = this.rattan1 + 1;
-        this.gameMoveNodeArray.push(bananna);
-        return bananna;
-    },
+    // getBanannaFromPrefabPool() {
+    //     let X = windowWidth / 2 + 100
+    //     let Y = (rnd(0, 1) === 0) ? topHeight + 30 : buttonHeight
+    //     let bananna = getNodeFromPrefabPool(this.node, this.banannaPrefabPool, this.banannaPrefab, X, Y)
+    //     bananna.zIndex = this.rattan1 + 1;
+    //     bananna.game = this
+    //     this.gameMoveNodeArray.push(bananna);
+    //     return bananna;
+    // },
 
     resetScore() {
         this.score = 0;
@@ -174,16 +182,15 @@ cc.Class({
         this.scoreDisplay.string = 'Score: ' + (parseInt(this.score)).toString();
     },
 
-    destroyNodeFormMoveArray(node, i) {
-        node.destroy();
-        if (i < 0) {
-            for (i = 0; i < this.gameMoveNodeArray.length; i++) {
-                if (this.gameMoveNodeArray[i].active === false) {
-                    break;
-                }
+    removeNodeFormMoveArray(node) {
+        var i;
+        for (i = 0; i < this.gameMoveNodeArray.length; i++) {
+            if (this.gameMoveNodeArray[i].x === node.x && this.gameMoveNodeArray[i].y === node.y) {
+                //console.log("移除",node)
+                this.gameMoveNodeArray.splice(i,1)
+                break;
             }
         }
-        this.gameMoveNodeArray.splice(i, 1)
     },
 
     gameOver() {
@@ -191,10 +198,11 @@ cc.Class({
         this.pauseButton.node.active = false
         this.pauseBoardNode.active = true
         this.gameOverNode.active = true
+        cc.audioEngine.play(this.gameOverAudio, false, 1);
         //防止多次点击后失效
         let pauseNodeScript = this.pauseBoardNode.getComponent("PauseBoard")
         pauseNodeScript.onLoad()
-        pauseNodeScript.continueButton.node.active = false /* 将continue按钮隐藏 */
+        pauseNodeScript.buttonDisplayMode(1)
         this.gameStatus = false
         cc.director.pause()
     },
@@ -238,37 +246,45 @@ cc.Class({
 
     start() {
         //在start初始化节点，onLoad中不可以关于节点的初始化
-        this.speed = 200
+        this.metercount = 0
+        this.speed = 300
+        //猴子出场
+        this.Player.x = -740;
+        var moveAction = cc.moveTo(1.5, cc.v2(-460, this.Player.y));
+        var finish = cc.callFunc(() => {
+            this.gameStatus = true;
+        })
+        var action = cc.sequence(moveAction, finish)
+        this.Player.runAction(action)
     },
 
     update(dt) {
+        this.gameTimer += dt;
         this.scrollLeftMove(dt, this.speed)
 
         this.barrierTimer += dt * this.speed;
         this.banannaTimer += dt * this.speed;
+        this.meterTimer += dt * this.speed;
 
-        this.speed += dt * 20;
         this.gainScore(this.speed * dt / 20)
+
+        if(this.meterTimer>10200){
+            this.metercount +=1;
+            var board = this.spawnNewBarrier(this.meterBoardPrefab,windowWidth / 2 + 100,-175)
+            this.speed += this.speedup
+            this.difficult /= 1.2
+            console.log(board.getComponent("LabelBoard"))
+            board.getComponent("LabelBoard").onDisplay(this.metercount + '000m')  ;
+            this.meterTimer = 0
+        }
 
         if (this.barrierTimer > this.difficult) {
             this.spawnRandomBarrier()
             this.barrierTimer = 0
             this.banannaTimer = 0
         } else if (this.banannaTimer > this.bonusDuration) {
-
-            let bananna = null;
-            if (this.banannaPrefabPool.size() > 0) { // 通过 size 接口判断对象池中是否有空闲的对象
-                bananna = this.banannaPrefabPool.get();
-            } else { // 如果没有空闲对象，也就是对象池中备用对象不够时，我们就用 cc.instantiate 重新创建
-                bananna = cc.instantiate(this.banannaPrefab);
-            }
-            this.node.addChild(bananna);
-
-            bananna.setPosition(cc.v2(windowWidth / 2 + 100, (rnd(0, 1) === 0) ? topHeight : buttonHeight));
-            bananna.zIndex = this.rattan1 + 1;
-
-            console.log("生成香蕉", bananna)
-            this.gameMoveNodeArray.push(bananna);
+            var bananna = this.spawnNewBarrier(this.banannaPrefab,windowWidth / 2 + 100,(rnd(0, 1) === 0) ? topHeight + 30 : buttonHeight)
+            //this.getBanannaFromPrefabPool()
             this.banannaTimer = 0
         }
     },
@@ -295,10 +311,12 @@ cc.Class({
 
         var i
         for (i = 0; i < this.gameMoveNodeArray.length; i++) {
+            //console.log(this.gameMoveNodeArray[i])
             this.gameMoveNodeArray[i].x -= dt * speed;
             if (this.gameMoveNodeArray[i].x < -windowWidth / 2 - 100) {
-                console.log("删除节点", this.gameMoveNodeArray[i])
-                this.destroyNodeFormMoveArray(this.gameMoveNodeArray[i], i)
+                //console.log("删除节点", this.gameMoveNodeArray[i])
+                this.gameMoveNodeArray[i].destroy()
+                this.gameMoveNodeArray.splice(i, 1)
                 i--;
             }
         }

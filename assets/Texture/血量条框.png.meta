@@ -1,0 +1,31 @@
+{
+  "ver": "2.2.0",
+  "uuid": "5a8a7ab2-6a90-4002-ac1d-d31be44704e9",
+  "type": "sprite",
+  "wrapMode": "clamp",
+  "filterMode": "bilinear",
+  "premultiplyAlpha": false,
+  "subMetas": {
+    "血量条框": {
+      "ver": "1.0.3",
+      "uuid": "7c344f0e-f665-47db-8595-cbf35a6a7243",
+      "rawTextureUuid": "5a8a7ab2-6a90-4002-ac1d-d31be44704e9",
+      "trimType": "auto",
+      "trimThreshold": 1,
+      "rotated": false,
+      "offsetX": 0,
+      "offsetY": 5,
+      "trimX": 0,
+      "trimY": 24,
+      "width": 644,
+      "height": 161,
+      "rawWidth": 644,
+      "rawHeight": 219,
+      "borderTop": 0,
+      "borderBottom": 0,
+      "borderLeft": 0,
+      "borderRight": 0,
+      "subMetas": {}
+    }
+  }
+}

@@ -8,25 +8,24 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
-//import { barrierType } from "./config"
-
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        crashAudio: {
+        label: {
             default: null,
-            type: cc.AudioClip
+            type: cc.Label
         }
     },
 
-    onCollisionEnter(other, self) {
-        if (other.node.name === 'monkey' && self.node.collisionCounter == 0) {
-            this.current = cc.audioEngine.play(this.crashAudio, false, 1);
-        }
+    // LIFE-CYCLE CALLBACKS:
+
+    // onLoad () {},
+    onDisplay(str){
+        this.label.string = str
     },
 
-    start() {
+    start () {
 
     },
 

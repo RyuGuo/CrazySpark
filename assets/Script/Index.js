@@ -27,6 +27,14 @@ cc.Class({
         exitButton: {
             default: null,
             type: cc.Button
+        },
+        helpBoard: {
+            default: null,
+            type: cc.Node
+        },
+        closeHelpButton: {
+            default: null,
+            type:cc.Button
         }
     },
 
@@ -34,18 +42,25 @@ cc.Class({
 
     onLoad () {
         console.log("获取视图的大小",cc.winSize)
+
+        this.helpBoard.active = false;
+
+
         this.playButton.node.on('click', this.onPlayButtonCallBack, this);
         this.helpButton.node.on('click', this.onHelpButtonCallBack, this);
         this.settingButton.node.on('click', this.onSettingButtonCallBack, this);
         this.exitButton.node.on('click', this.onExitButtonCallBack, this);
+        this.closeHelpButton.node.on('click',this.onColseHelpCallBack, this);
 
     },
 
     onDisable(){
-        this.playButton.node.on('click', this.onPlayButtonCallBack, this);
-        this.helpButton.node.on('click', this.onHelpButtonCallBack, this);
-        this.settingButton.node.on('click', this.onSettingButtonCallBack, this);
-        this.exitButton.node.on('click', this.onExitButtonCallBack, this);
+        this.playButton.node.off('click', this.onPlayButtonCallBack, this);
+        this.helpButton.node.off('click', this.onHelpButtonCallBack, this);
+        this.settingButton.node.off('click', this.onSettingButtonCallBack, this);
+        this.exitButton.node.off('click', this.onExitButtonCallBack, this);
+        this.closeHelpButton.node.off('click',this.onColseHelpCallBack, this);
+
     },
 
     onPlayButtonCallBack(){
@@ -54,12 +69,16 @@ cc.Class({
     },
 
     onHelpButtonCallBack(){
-
+        this.helpBoard.active = true;
     },
 
     onSettingButtonCallBack(){
 
 
+    },
+
+    onColseHelpCallBack(){
+        this.helpBoard.active = false;
     },
 
     onExitButtonCallBack(){
