@@ -153,9 +153,7 @@
       "__id__": 1
     },
     "_enabled": true,
-    "crashAudio": {
-      "__uuid__": "e92da036-8607-47d3-8ca4-b8e08a68752a"
-    },
+    "crashAudio": null,
     "_id": ""
   },
   {

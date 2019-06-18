@@ -18,6 +18,10 @@ cc.Class({
         //energy: 1,
         jumpDuration: 0.5,
         //invincibility: false
+        injuredAudio: {
+            default: null,
+            type: cc.AudioClip
+        }
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -46,23 +50,61 @@ cc.Class({
     },
 
     onCollisionEnter: function (other, self) {
-        if (other.node.name === 'bananna') {
-            if (other.node.collisionCounter == 0) {
-                other.node.collisionCounter += 1
-                this.node.game.gainScore(10)
-                this.node.game.removeNodeFormMoveArray(other.node)
-                other.node.getComponent("Bananna").eatBananna()
-            }
-
-        } else {
-            cc.loader.loadRes("猴子失败", cc.SpriteFrame, function (err, spriteFrame) {
-                self.node.getComponent(cc.Sprite).spriteFrame = spriteFrame;
-            });
-            // console.log(this.node.getComponent(cc.Sprite))
-            // spriteFrame.setTexture(texture);
-            // this.node.getComponent(cc.Sprite).SpriteFrame = this.failedSpiritFrame
-            this.node.game.gameOver()
+        switch (other.node.name) {
+            case 'bananna':
+                if (other.node.collisionCounter == 0) {
+                    other.node.collisionCounter += 1
+                    this.node.game.gainScore(10)
+                    this.gainEnergy(0.1)
+                    this.node.game.removeNodeFormMoveArray(other.node)
+                    other.node.getComponent("Bananna").eatBananna()
+                    if(this.energy==1){
+                        this.gainLife(0.2)
+                        this.resetEnergy()
+                    }
+                }
+                break;
+            default:
+                this.gainLife(-1.0 / 4)
+                cc.audioEngine.play(this.injuredAudio, false, 1);
+                if (this.life <= 0) {
+                    cc.loader.loadRes("猴子失败", cc.SpriteFrame, function (err, spriteFrame) {
+                        self.node.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+                    });
+                    this.node.game.gameOver()
+                }
+                break;
         }
+    },
+
+    resetLife() {
+        this.life = 1;
+        this.node.game.setLifeBar(this.life)
+    },
+
+    gainLife(value) {
+        this.life += value;
+        if (this.life > 1) {
+            this.life = 1
+        } else if (this.life < 0) {
+            this.life = 0
+        }
+        this.node.game.setLifeBar(this.life)
+    },
+
+    resetEnergy() {
+        this.energy = 0;
+        this.node.game.setEnergyBar(this.energy)
+    },
+
+    gainEnergy(value) {
+        this.energy += value;
+        if (this.energy > 1) {
+            this.energy = 1
+        } else if (this.energy < 0) {
+            this.energy = 0
+        }
+        this.node.game.setEnergyBar(this.energy)
     },
 
     jumpAction() {

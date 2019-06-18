@@ -41,8 +41,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 1.8294808774255489,
-      "y": 1.8294808774255489,
+      "x": 0.40935781301979646,
+      "y": 0.40935781301979646,
       "z": 1
     },
     "_quat": {
@@ -1071,6 +1071,9 @@
     "_enabled": true,
     "position": 0,
     "jumpDuration": 0.2,
+    "injuredAudio": {
+      "__uuid__": "34494084-cc6c-4ffd-a231-a6ac2ce08494"
+    },
     "_id": "bfLk6Wp99GA57cwn2fBbrM"
   },
   {
@@ -2452,6 +2455,12 @@
     },
     "meterBoardPrefab": {
       "__uuid__": "ae20186f-9d59-4aad-a27e-7ba33b1aa7bd"
+    },
+    "lifeBar": {
+      "__id__": 53
+    },
+    "energyBar": {
+      "__id__": 48
     },
     "_id": "e7+uC7BZZG/qCRM3DkUV8e"
   }

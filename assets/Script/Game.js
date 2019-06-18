@@ -96,6 +96,14 @@ cc.Class({
         meterBoardPrefab: {
             default:null,
             type: cc.Prefab
+        },
+        lifeBar: {
+            default: null,
+            type: cc.ProgressBar
+        },
+        energyBar: {
+            default: null,
+            type: cc.ProgressBar
         }
     },
 
@@ -116,6 +124,10 @@ cc.Class({
         this.pauseBoardNode.game = this
 
         this.resetScore()
+
+        var playerScript = this.Player.getComponent("Player")
+        playerScript.resetLife()
+        playerScript.resetEnergy()
         //this.initBanannaPrefabPool()
         this.gameOverNode.active = false
         this.pauseBoardNode.active = false
@@ -180,6 +192,14 @@ cc.Class({
     gainScore(value) {
         this.score += value;
         this.scoreDisplay.string = 'Score: ' + (parseInt(this.score)).toString();
+    },
+
+    setLifeBar(value){
+        this.lifeBar.progress = value;
+    },
+
+    setEnergyBar(value){
+        this.energyBar.progress = value
     },
 
     removeNodeFormMoveArray(node) {
@@ -259,6 +279,7 @@ cc.Class({
     },
 
     update(dt) {
+        //console.log(dt)
         this.gameTimer += dt;
         this.scrollLeftMove(dt, this.speed)
 
