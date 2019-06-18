@@ -16,7 +16,7 @@ cc.Class({
 
     properties: {
         position: 0, //0是下，1是上
-        getEnergy
+        getEnergy: 10,
         jumpDuration: 0.5,
         injuredAudio: {
             default: null,

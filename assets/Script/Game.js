@@ -81,6 +81,22 @@ cc.Class({
             default: null,
             type: cc.Node
         },
+        background3: {
+            default: null,
+            type: cc.Node
+        },
+        background4: {
+            default: null,
+            type: cc.Node
+        },
+        background5: {
+            default: null,
+            type: cc.Node
+        },
+        background6: {
+            default: null,
+            type: cc.Node
+        },
         rattan1: {
             default: null,
             type: cc.Node
@@ -110,6 +126,7 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
+        this.bgTimer = 0
         this.gameTimer = 0
         this.barrierTimer = 0
         this.banannaTimer = 0
@@ -279,39 +296,69 @@ cc.Class({
     },
 
     update(dt) {
-        //console.log(dt)
-        this.gameTimer += dt;
-        this.scrollLeftMove(dt, this.speed)
+        this.bgTimer += dt
+        this.rattanScroll(dt,this.speed)
+        this.moveNodeScroll(dt,this.speed)
 
+        if(this.bgTimer >= 20) {
+            if(this.background5.x < -2*windowWidth) {
+                this.background5.x = windowWidth
+                this.background1.x = 0
+                this.background2.x = windowWidth
+            }
+            
+            if(this.background6.x >= -windowWidth && this.background6.x <= 0) {
+                this.background3.x = windowWidth
+                this.background4.x = 2*windowWidth
+                this.scrollLeftMove(dt,this.speed)
+                this.scroll2transit(dt,this.speed)
+            }
+            else {
+                if(this.background4.x == 2*windowWidth) {
+                    //this.background1.x = 0
+                    //this.background2.x = windowWidth
+                    this.background5.x = windowWidth
+                    this.background6.x = windowWidth
+                    this.bgTimer = 0
+                }
+                else{
+                this.scroll2LeftMove(dt,this.speed)
+                this.scroll2transit(dt,this.speed)
+                }
+            }
+        }
+        if(this.bgTimer <= 11)
+            this.scrollLeftMove(dt, this.speed)
+        if(this.bgTimer > 11 && this.bgTimer <20){
+                this.scrollLeftMove(dt,this.speed)
+                //this.scrolltransit(dt,this.speed)
+                if(this.background5.x == 0 || this.background5.x >= -windowWidth) {
+                    this.scrolltransit(dt,this.speed)
+                    this.scroll2LeftMove(dt,this.speed)
+                }
+                else{
+                    this.scroll2LeftMove(dt,this.speed)
+                }
+        }
+       
         this.barrierTimer += dt * this.speed;
         this.banannaTimer += dt * this.speed;
-        this.meterTimer += dt * this.speed;
 
+        this.speed += dt * 20;
         this.gainScore(this.speed * dt / 20)
-
-        if(this.meterTimer>10200){
-            this.metercount +=1;
-            var board = this.spawnNewBarrier(this.meterBoardPrefab,windowWidth / 2 + 100,-175)
-            this.speed += this.speedup
-            this.difficult /= 1.2
-            console.log(board.getComponent("LabelBoard"))
-            board.getComponent("LabelBoard").onDisplay(this.metercount + '000m')  ;
-            this.meterTimer = 0
-        }
 
         if (this.barrierTimer > this.difficult) {
             this.spawnRandomBarrier()
             this.barrierTimer = 0
             this.banannaTimer = 0
         } else if (this.banannaTimer > this.bonusDuration) {
-            var bananna = this.spawnNewBarrier(this.banannaPrefab,windowWidth / 2 + 100,(rnd(0, 1) === 0) ? topHeight + 30 : buttonHeight)
-            //this.getBanannaFromPrefabPool()
+            this.spawnNewBarrier(this.banannaPrefab,windowWidth / 2 + 100, (rnd(0, 1) === 0) ? topHeight : buttonHeight)
             this.banannaTimer = 0
         }
     },
 
     scrollLeftMove(dt, speed) {
-        //屏幕背景移动
+        //屏幕背景1移动
         this.background1.x -= dt * speed
         this.background2.x -= dt * speed
         if (this.background1.x < -windowWidth) {
@@ -320,7 +367,30 @@ cc.Class({
         if (this.background2.x < -windowWidth) {
             this.background2.x = windowWidth + this.background1.x
         }
+    },
 
+    scroll2LeftMove(dt, speed) {
+        //屏幕背景2移动
+        this.background3.x -= dt * speed
+        this.background4.x -= dt * speed
+        if (this.background3.x < -windowWidth) {
+            this.background3.x = windowWidth + this.background4.x
+        }
+        if (this.background4.x < -windowWidth) {
+            this.background4.x = windowWidth + this.background3.x
+        }
+    },
+
+    scrolltransit(dt,speed){
+        //屏幕过渡背景移动
+        this.background5.x -= dt*speed
+    },
+    scroll2transit(dt,speed){
+        //屏幕过渡背景移动
+        this.background6.x -= dt*speed
+    },
+
+    rattanScroll(dt,speed) {
         this.rattan1.x -= dt * speed
         this.rattan2.x -= dt * speed
         if (this.rattan1.x < -windowWidth) {
@@ -329,15 +399,16 @@ cc.Class({
         if (this.rattan2.x < -windowWidth) {
             this.rattan2.x = windowWidth + this.rattan1.x
         }
+    },
 
+    moveNodeScroll(dt,speed){
         var i
         for (i = 0; i < this.gameMoveNodeArray.length; i++) {
-            //console.log(this.gameMoveNodeArray[i])
             this.gameMoveNodeArray[i].x -= dt * speed;
             if (this.gameMoveNodeArray[i].x < -windowWidth / 2 - 100) {
-                //console.log("删除节点", this.gameMoveNodeArray[i])
+                console.log("删除节点", this.gameMoveNodeArray[i])
                 this.gameMoveNodeArray[i].destroy()
-                this.gameMoveNodeArray.splice(i, 1)
+                this.gameMoveNodeArray.splice(i,1)
                 i--;
             }
         }
