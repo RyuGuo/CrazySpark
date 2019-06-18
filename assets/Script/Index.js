@@ -8,6 +8,8 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
+import Global from "Global";
+
 cc.Class({
     extends: cc.Component,
 
@@ -35,6 +37,18 @@ cc.Class({
         closeHelpButton: {
             default: null,
             type:cc.Button
+        },
+        skillBoard: {
+            default: null,
+            type: cc.Node
+        },
+        skillInvincibleButton: {
+            default: null,
+            type: cc.Button
+        },
+        skillRecoveryButton: {
+            default: null,
+            type: cc.Button
         }
     },
 
@@ -44,14 +58,15 @@ cc.Class({
         console.log("获取视图的大小",cc.winSize)
 
         this.helpBoard.active = false;
-
+        this.skillBoard.active = false;
 
         this.playButton.node.on('click', this.onPlayButtonCallBack, this);
         this.helpButton.node.on('click', this.onHelpButtonCallBack, this);
         this.settingButton.node.on('click', this.onSettingButtonCallBack, this);
         this.exitButton.node.on('click', this.onExitButtonCallBack, this);
         this.closeHelpButton.node.on('click',this.onColseHelpCallBack, this);
-
+        this.skillInvincibleButton.node.on('click',this.onSkillInvincibleButtonCallBack,this);
+        this.skillRecoveryButton.node.on('click',this.onSkillRecoveryButtonCallBack,this);
     },
 
     onDisable(){
@@ -60,10 +75,24 @@ cc.Class({
         this.settingButton.node.off('click', this.onSettingButtonCallBack, this);
         this.exitButton.node.off('click', this.onExitButtonCallBack, this);
         this.closeHelpButton.node.off('click',this.onColseHelpCallBack, this);
-
+        this.skillInvincibleButton.node.off('click',this.onSkillInvincibleButtonCallBack,this);
+        this.skillRecoveryButton.node.off('click',this.onSkillRecoveryButtonCallBack,this);
     },
 
     onPlayButtonCallBack(){
+        //cc.director.resume() /* 结束暂停状态 */
+        this.skillBoard.active = true
+    },
+
+    onSkillInvincibleButtonCallBack(){
+        Global.skillChoose = 0;
+        cc.director.loadScene("game")
+        cc.director.resume() /* 结束暂停状态 */
+    },
+
+    onSkillRecoveryButtonCallBack(){
+        Global.skillChoose = 1;
+        console.log(Global.skillChoose)
         cc.director.loadScene("game")
         cc.director.resume() /* 结束暂停状态 */
     },
@@ -73,7 +102,7 @@ cc.Class({
     },
 
     onSettingButtonCallBack(){
-
+        return;
 
     },
 

@@ -9,12 +9,14 @@
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import { buttonHeight, topHeight } from "./config"
+import Global from "./Global"
 
 cc.Class({
     extends: cc.Component,
 
     properties: {
         position: 0, //0是下，1是上
+        getEnergy
         jumpDuration: 0.5,
         injuredAudio: {
             default: null,
@@ -64,7 +66,7 @@ cc.Class({
                     this.node.game.removeNodeFormMoveArray(other.node)
                     other.node.getComponent("Bananna").eatBananna()
                     if (this.energy == 1) {
-                        this.useSkill(1)
+                        this.useSkill(Global.skillChoose)
                         this.resetEnergy()
                     }
                 }
