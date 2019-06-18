@@ -15,11 +15,35 @@ cc.Class({
         jumpAudio: {
             default: null,
             type: cc.AudioClip
+        },
+        injuredAudio: {
+            default: null,
+            type: cc.AudioClip
+        },
+        getSomethingAudio: {
+            default: null,
+            type: cc.AudioClip
+        },
+        recoveryAudio: {
+            default: null,
+            type: cc.AudioClip
         }
     },
 
     onJumpAudioPlay(){
         this.current = cc.audioEngine.play(this.jumpAudio, false, 1);
+    },
+
+    onInjuredAudioPlay(){
+        this.current = cc.audioEngine.play(this.injuredAudio, false, 1);
+    },
+
+    onGetSomethingAudio() {
+        this.current = cc.audioEngine.play(this.getSomethingAudio, false, 1);
+    },
+
+    onRecoveryAudio(){
+        this.current = cc.audioEngine.play(this.recoveryAudio, false, 1);
     },
 
     start () {

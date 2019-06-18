@@ -15,10 +15,12 @@ cc.Class({
 
     properties: {
         position: 0, //0是下，1是上
-        //energy: 1,
         jumpDuration: 0.5,
-        //invincibility: false
         injuredAudio: {
+            default: null,
+            type: cc.AudioClip
+        },
+        getSomethingAudio: {
             default: null,
             type: cc.AudioClip
         }
@@ -28,6 +30,9 @@ cc.Class({
 
     onLoad() {
         this.isAction = false
+        this.invincibility = false
+        this.node.getChildByName("shield").active = false
+        this.node.getChildByName("recovery").active = false
         // 初始化键盘输入监听
         //cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
 
@@ -58,22 +63,26 @@ cc.Class({
                     this.gainEnergy(0.1)
                     this.node.game.removeNodeFormMoveArray(other.node)
                     other.node.getComponent("Bananna").eatBananna()
-                    if(this.energy==1){
-                        this.gainLife(0.2)
+                    if (this.energy == 1) {
+                        this.useSkill(1)
                         this.resetEnergy()
                     }
                 }
                 break;
             default:
-                this.gainLife(-1.0 / 4)
-                cc.audioEngine.play(this.injuredAudio, false, 1);
-                if (this.life <= 0) {
-                    cc.loader.loadRes("猴子失败", cc.SpriteFrame, function (err, spriteFrame) {
-                        self.node.getComponent(cc.Sprite).spriteFrame = spriteFrame;
-                    });
-                    this.node.game.gameOver()
+                if (!this.invincibility) {
+                    this.gainLife(-1.0 / 4)
+                    this.node.getComponent("PlayerAudioControl").onInjuredAudioPlay()
+                    //cc.audioEngine.play(this.injuredAudio, false, 1);
+                    if (this.life <= 0) {
+                        cc.loader.loadRes("猴子失败", cc.SpriteFrame, function (err, spriteFrame) {
+                            self.node.getComponent(cc.Sprite).spriteFrame = spriteFrame;
+                        });
+                        this.node.game.gameOver()
+                    }
+                    break;
                 }
-                break;
+
         }
     },
 
@@ -107,6 +116,35 @@ cc.Class({
         this.node.game.setEnergyBar(this.energy)
     },
 
+    useSkill(type) {
+        switch (type) {
+            case 0:
+                this.node.getComponent("PlayerAudioControl").onGetSomethingAudio()
+                this.invincibility = true
+                var sheid = this.node.getChildByName("shield")
+                sheid.active = true
+                this.scheduleOnce(function () {
+                    // 这里的 this 指向 component
+                    this.invincibility = false
+                    sheid.active = false
+                }, 2);
+                break;
+            case 1:
+                this.node.getComponent("PlayerAudioControl").onRecoveryAudio()
+                var recovery = this.node.getChildByName("recovery")
+                recovery.active = true
+                this.scheduleOnce(function () {
+                    // 这里的 this 指向 component
+                    recovery.active = false
+                }, 1.3);
+                this.gainLife(0.2)
+                break;
+            default:
+                break;
+        }
+
+    },
+
     jumpAction() {
         var jump;
         this.isAction = true
@@ -122,7 +160,7 @@ cc.Class({
             this.isAction = false;
         }, this);
 
-        this.node.getComponent("AudioControl").onJumpAudioPlay()
+        this.node.getComponent("PlayerAudioControl").onJumpAudioPlay()
 
         var action = cc.sequence(jump, finished)
         this.node.runAction(action);

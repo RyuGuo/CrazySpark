@@ -1,6 +1,6 @@
 {
   "__type__": "cc.AnimationClip",
-  "_name": "Clip",
+  "_name": "run",
   "_objFlags": 0,
   "_native": "",
   "_duration": 0.3,
@@ -66,6 +66,66 @@
             }
           }
         ]
+      }
+    },
+    "paths": {
+      "shield": {
+        "props": {
+          "scale": [
+            {
+              "frame": 0,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 0.8,
+                "y": 0.8
+              }
+            },
+            {
+              "frame": 0.13333333333333333,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 1,
+                "y": 1
+              }
+            },
+            {
+              "frame": 0.26666666666666666,
+              "value": {
+                "__type__": "cc.Vec2",
+                "x": 0.8,
+                "y": 0.8
+              }
+            }
+          ]
+        }
+      },
+      "recovery": {
+        "props": {
+          "y": [
+            {
+              "frame": 0,
+              "value": 38
+            },
+            {
+              "frame": 0.26666666666666666,
+              "value": 93.7
+            }
+          ],
+          "opacity": [
+            {
+              "frame": 0,
+              "value": 255
+            },
+            {
+              "frame": 0.2,
+              "value": 255
+            },
+            {
+              "frame": 0.26666666666666666,
+              "value": 150
+            }
+          ]
+        }
       }
     }
   },
