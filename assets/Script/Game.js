@@ -11,15 +11,17 @@
 import {
     buttonHeight, topHeight, windowWidth, barrierType
 } from "./config"
-import { rnd, spawnNewNode, getNodeFromPrefabPool } from "./utils"
+import { rnd, spawnNewNode } from "./utils"
 
 cc.Class({
     extends: cc.Component,
 
     properties: {
+        initSpeed: 300,
         difficult: 1000,
-        speedup:   20,
+        speedup:   10,
         bonusDuration: 200,
+        bgShiftDuration: 15,
         Player: {
             default: null,
             type: cc.Node
@@ -284,7 +286,7 @@ cc.Class({
     start() {
         //在start初始化节点，onLoad中不可以关于节点的初始化
         this.metercount = 0
-        this.speed = 300
+        this.speed = this.initSpeed
         //猴子出场
         this.Player.x = -740;
         var moveAction = cc.moveTo(1.5, cc.v2(-460, this.Player.y));
@@ -300,7 +302,7 @@ cc.Class({
         this.rattanScroll(dt,this.speed)
         this.moveNodeScroll(dt,this.speed)
 
-        if(this.bgTimer >= 20) {
+        if(this.bgTimer >= this.bgShiftDuration) {
             if(this.background5.x < -2*windowWidth) {
                 this.background5.x = windowWidth
                 this.background1.x = 0
@@ -327,9 +329,9 @@ cc.Class({
                 }
             }
         }
-        if(this.bgTimer <= 11)
+        if(this.bgTimer <= this.bgShiftDuration+1)
             this.scrollLeftMove(dt, this.speed)
-        if(this.bgTimer > 11 && this.bgTimer <20){
+        if(this.bgTimer > this.bgShiftDuration+1 && this.bgTimer <this.bgShiftDuration*2){
                 this.scrollLeftMove(dt,this.speed)
                 //this.scrolltransit(dt,this.speed)
                 if(this.background5.x == 0 || this.background5.x >= -windowWidth) {
@@ -344,7 +346,7 @@ cc.Class({
         this.barrierTimer += dt * this.speed;
         this.banannaTimer += dt * this.speed;
 
-        this.speed += dt * 20;
+        this.speed += dt * this.speedup;
         this.gainScore(this.speed * dt / 20)
 
         if (this.barrierTimer > this.difficult) {

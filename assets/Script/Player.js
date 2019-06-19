@@ -17,6 +17,7 @@ cc.Class({
     properties: {
         position: 0, //0是下，1是上
         getEnergy: 10,
+        damage: 5,
         jumpDuration: 0.5,
         injuredAudio: {
             default: null,
@@ -62,7 +63,8 @@ cc.Class({
                 if (other.node.collisionCounter == 0) {
                     other.node.collisionCounter += 1
                     this.node.game.gainScore(10)
-                    this.gainEnergy(0.1)
+                    Global.skillExp[Global.skillChoose].exp += 1
+                    this.gainEnergy(1/this.getEnergy)
                     this.node.game.removeNodeFormMoveArray(other.node)
                     other.node.getComponent("Bananna").eatBananna()
                     if (this.energy == 1) {
@@ -73,7 +75,7 @@ cc.Class({
                 break;
             default:
                 if (!this.invincibility) {
-                    this.gainLife(-1.0 / 4)
+                    this.gainLife(-1.0 / this.damage)
                     this.node.getComponent("PlayerAudioControl").onInjuredAudioPlay()
                     //cc.audioEngine.play(this.injuredAudio, false, 1);
                     if (this.life <= 0) {
@@ -129,7 +131,7 @@ cc.Class({
                     // 这里的 this 指向 component
                     this.invincibility = false
                     sheid.active = false
-                }, 2);
+                }, Global.skillExp[0].lv+1);
                 break;
             case 1:
                 this.node.getComponent("PlayerAudioControl").onRecoveryAudio()
@@ -139,7 +141,7 @@ cc.Class({
                     // 这里的 this 指向 component
                     recovery.active = false
                 }, 1.3);
-                this.gainLife(0.2)
+                this.gainLife(Global.skillExp[1].lv*0.05+0.1)
                 break;
             default:
                 break;

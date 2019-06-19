@@ -12,17 +12,24 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        label: {
+        closeButton: {
             default: null,
-            type: cc.Label
+            type: cc.Button
         }
     },
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {},
-    onDisplay(str){
-        this.label.string = str
+    onLoad () {
+        this.closeButton.node.on('click',this.onCloseButtonCallBack,this)
+    },
+
+    onDisable(){
+        this.closeButton.node.off('click',this.onCloseButtonCallBack,this)
+    },
+
+    onCloseButtonCallBack(){
+        this.node.active = false
     },
 
     start () {

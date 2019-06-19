@@ -16,3 +16,12 @@ export const barrierType = {
   'snake': 6,
   'littlesnake': 7
 }
+
+export const skillType = {
+  invincableShield: 0,
+  recoveryLife: 1
+}
+
+export const levelExp = [
+  0,100,250,500,1000,2000,5000,10000,99999999
+]
