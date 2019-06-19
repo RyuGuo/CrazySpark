@@ -51,9 +51,10 @@ cc.Class({
             default: null,
             type: cc.Button
         },
-        levelUpAudio: {
+        
+        levelUpPrefab: {
             default: null,
-            type: cc.AudioClip
+            type: cc.Prefab
         }
     },
 
@@ -114,23 +115,15 @@ cc.Class({
         nodelist.forEach((listitem, index) => {
             listitem.getChildByName("lv").getComponent(cc.Label).string = "Lv " + Global.skillExp[index].lv
             listitem.getChildByName("exp").getComponent(cc.Label).string = "Exp " + Global.skillExp[index].exp + "/" + levelExp[Global.skillExp[index].lv]
-            listitem.getChildByName("levelup").active = false
         });
 
 
         if (skillupindex != -1) {
-            cc.audioEngine.play(this.levelUpAudio, false, 1)
-            var levelupNode = nodelist[skillupindex].getChildByName("levelup")
-            levelupNode.active = true
-            var moveAciton = cc.moveBy(1, 0,50)
-            var fadeOutAction = cc.fadeOut(1.5)
-            var finish = cc.callFunc(() => {
-                levelupNode.active = false
-            })
-            var action = cc.sequence(cc.spawn(moveAciton,fadeOutAction), finish)
-            levelupNode.runAction(action)
+            var levelupNode = cc.instantiate(this.levelUpPrefab)
+            nodelist[skillupindex].addChild(levelupNode)
+            levelupNode.setPosition(cc.v2(65,-70))
+            levelupNode.getComponent("LevelUp").init()
         }
-
     },
 
     onPlayButtonCallBack() {

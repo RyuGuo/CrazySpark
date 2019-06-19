@@ -41,8 +41,8 @@
     },
     "_scale": {
       "__type__": "cc.Vec3",
-      "x": 0.17818333735702577,
-      "y": 0.17818333735702577,
+      "x": 0.6742868353028065,
+      "y": 0.6742868353028065,
       "z": 1
     },
     "_quat": {
@@ -248,7 +248,7 @@
     "_clip": {
       "__uuid__": "ee30bf52-1bfa-4d54-80eb-96329a0d8de1"
     },
-    "_volume": 0,
+    "_volume": 1,
     "_mute": false,
     "_loop": true,
     "playOnLoad": true,
@@ -1624,6 +1624,7 @@
     "_enabled": true,
     "position": 0,
     "getEnergy": 10,
+    "damage": 4,
     "jumpDuration": 0.2,
     "injuredAudio": {
       "__uuid__": "34494084-cc6c-4ffd-a231-a6ac2ce08494"
@@ -2962,9 +2963,11 @@
       "__id__": 2
     },
     "_enabled": true,
-    "difficult": 1000,
-    "speedup": 20,
-    "bonusDuration": 200,
+    "initSpeed": 300,
+    "speedup": 5,
+    "difficult": 900,
+    "bonusDuration": 350,
+    "bgShiftDuration": 45,
     "Player": {
       "__id__": 29
     },

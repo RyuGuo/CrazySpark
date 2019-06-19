@@ -18,8 +18,8 @@ cc.Class({
 
     properties: {
         initSpeed: 300,
+        speedup: 10,
         difficult: 1000,
-        speedup:   10,
         bonusDuration: 200,
         bgShiftDuration: 15,
         Player: {
@@ -112,7 +112,7 @@ cc.Class({
             type: cc.Button
         },
         meterBoardPrefab: {
-            default:null,
+            default: null,
             type: cc.Prefab
         },
         lifeBar: {
@@ -153,7 +153,7 @@ cc.Class({
         this.pauseButton.node.on('click', this.onPauseButtonCallBack, this);
 
         cc.director.getCollisionManager().enabled = true;
-        cc.director.getCollisionManager().enabledDebugDraw = true; //显示碰撞边框
+        cc.director.getCollisionManager().enabledDebugDraw = false; //显示碰撞边框
     },
 
     // initBanannaPrefabPool() {
@@ -213,11 +213,11 @@ cc.Class({
         this.scoreDisplay.string = 'Score: ' + (parseInt(this.score)).toString();
     },
 
-    setLifeBar(value){
+    setLifeBar(value) {
         this.lifeBar.progress = value;
     },
 
-    setEnergyBar(value){
+    setEnergyBar(value) {
         this.energyBar.progress = value
     },
 
@@ -226,7 +226,7 @@ cc.Class({
         for (i = 0; i < this.gameMoveNodeArray.length; i++) {
             if (this.gameMoveNodeArray[i].x === node.x && this.gameMoveNodeArray[i].y === node.y) {
                 //console.log("移除",node)
-                this.gameMoveNodeArray.splice(i,1)
+                this.gameMoveNodeArray.splice(i, 1)
                 break;
             }
         }
@@ -286,7 +286,10 @@ cc.Class({
     start() {
         //在start初始化节点，onLoad中不可以关于节点的初始化
         this.metercount = 0
+        this.nowbg = 0
+        this.bgstate = 0
         this.speed = this.initSpeed
+        this.bgArray = [this.background1, this.background2]
         //猴子出场
         this.Player.x = -740;
         var moveAction = cc.moveTo(1.5, cc.v2(-460, this.Player.y));
@@ -298,55 +301,78 @@ cc.Class({
     },
 
     update(dt) {
-        this.bgTimer += dt
-        this.rattanScroll(dt,this.speed)
-        this.moveNodeScroll(dt,this.speed)
-
-        if(this.bgTimer >= this.bgShiftDuration) {
-            if(this.background5.x < -2*windowWidth) {
-                this.background5.x = windowWidth
-                this.background1.x = 0
-                this.background2.x = windowWidth
-            }
-            
-            if(this.background6.x >= -windowWidth && this.background6.x <= 0) {
-                this.background3.x = windowWidth
-                this.background4.x = 2*windowWidth
-                this.scrollLeftMove(dt,this.speed)
-                this.scroll2transit(dt,this.speed)
-            }
-            else {
-                if(this.background4.x == 2*windowWidth) {
-                    //this.background1.x = 0
-                    //this.background2.x = windowWidth
-                    this.background5.x = windowWidth
-                    this.background6.x = windowWidth
-                    this.bgTimer = 0
-                }
-                else{
-                this.scroll2LeftMove(dt,this.speed)
-                this.scroll2transit(dt,this.speed)
-                }
-            }
-        }
-        if(this.bgTimer <= this.bgShiftDuration+1)
-            this.scrollLeftMove(dt, this.speed)
-        if(this.bgTimer > this.bgShiftDuration+1 && this.bgTimer <this.bgShiftDuration*2){
-                this.scrollLeftMove(dt,this.speed)
-                //this.scrolltransit(dt,this.speed)
-                if(this.background5.x == 0 || this.background5.x >= -windowWidth) {
-                    this.scrolltransit(dt,this.speed)
-                    this.scroll2LeftMove(dt,this.speed)
-                }
-                else{
-                    this.scroll2LeftMove(dt,this.speed)
-                }
-        }
-       
-        this.barrierTimer += dt * this.speed;
-        this.banannaTimer += dt * this.speed;
-
+        this.rattanScroll(dt, this.speed)
+        this.moveNodeScroll(dt, this.speed)
+        this.bgScroll(dt, this.speed)
+        this.itemScroll(dt, this.speed)
         this.speed += dt * this.speedup;
+
+    },
+
+    bgScroll(dt, speed) {
+        this.bgTimer += dt
+        var i;
+        for (i = 0; i < this.bgArray.length; i++) {
+            this.bgArray[i].x -= dt * speed
+            if (this.bgArray[i].x < -windowWidth) {
+                var bg = this.bgArray[i]
+                this.bgArray.splice(i, 1);
+                if (this.bgTimer > this.bgShiftDuration) {
+                    this.bgstate = 1
+                    this.bgTimer = 0
+                    this.nextbg = 1 - this.nowbg
+                }
+                switch (this.bgstate) {
+                    case 0:
+                        bg.x = this.bgArray[this.bgArray.length - 1].x + windowWidth
+                        this.bgArray.push(bg)
+                        break;
+                    case 1:
+                        if (this.nowbg == 0 && this.nextbg == 1) {
+                            this.background5.x = this.bgArray[this.bgArray.length - 1].x + windowWidth
+                            this.bgArray.push(this.background5)
+                        } else if (this.nowbg == 1 && this.nextbg == 0) {
+                            this.background6.x = this.bgArray[this.bgArray.length - 1].x + windowWidth
+                            this.bgArray.push(this.background6)
+                        }
+                        this.nowbg = this.nextbg
+                        this.bgstate = 2
+                        break;
+                    case 2:
+                        switch (this.nowbg) {
+                            case 0:
+                                this.background1.x = this.bgArray[this.bgArray.length - 1].x + windowWidth
+                                this.bgArray.push(this.background1)
+                                break;
+                            case 1:
+                                this.background3.x = this.bgArray[this.bgArray.length - 1].x + windowWidth
+                                this.bgArray.push(this.background3)
+                                break;
+                        }
+                        this.bgstate = 3;
+                        break;
+                    case 3:
+                        switch (this.nowbg) {
+                            case 0:
+                                this.background2.x = this.bgArray[this.bgArray.length - 1].x + windowWidth
+                                this.bgArray.push(this.background2)
+                                break;
+                            case 1:
+                                this.background4.x = this.bgArray[this.bgArray.length - 1].x + windowWidth
+                                this.bgArray.push(this.background4)
+                                break;
+                        }
+                        this.bgstate = 0;
+                        break;
+                }
+                i--;
+            }
+        }
+    },
+
+    itemScroll(dt, speed) {
+        this.barrierTimer += dt * speed;
+        this.banannaTimer += dt * speed;
         this.gainScore(this.speed * dt / 20)
 
         if (this.barrierTimer > this.difficult) {
@@ -354,45 +380,12 @@ cc.Class({
             this.barrierTimer = 0
             this.banannaTimer = 0
         } else if (this.banannaTimer > this.bonusDuration) {
-            this.spawnNewBarrier(this.banannaPrefab,windowWidth / 2 + 100, (rnd(0, 1) === 0) ? topHeight : buttonHeight)
+            this.spawnNewBarrier(this.banannaPrefab, windowWidth / 2 + 100, (rnd(0, 1) === 0) ? topHeight : buttonHeight)
             this.banannaTimer = 0
         }
     },
 
-    scrollLeftMove(dt, speed) {
-        //屏幕背景1移动
-        this.background1.x -= dt * speed
-        this.background2.x -= dt * speed
-        if (this.background1.x < -windowWidth) {
-            this.background1.x = windowWidth + this.background2.x
-        }
-        if (this.background2.x < -windowWidth) {
-            this.background2.x = windowWidth + this.background1.x
-        }
-    },
-
-    scroll2LeftMove(dt, speed) {
-        //屏幕背景2移动
-        this.background3.x -= dt * speed
-        this.background4.x -= dt * speed
-        if (this.background3.x < -windowWidth) {
-            this.background3.x = windowWidth + this.background4.x
-        }
-        if (this.background4.x < -windowWidth) {
-            this.background4.x = windowWidth + this.background3.x
-        }
-    },
-
-    scrolltransit(dt,speed){
-        //屏幕过渡背景移动
-        this.background5.x -= dt*speed
-    },
-    scroll2transit(dt,speed){
-        //屏幕过渡背景移动
-        this.background6.x -= dt*speed
-    },
-
-    rattanScroll(dt,speed) {
+    rattanScroll(dt, speed) {
         this.rattan1.x -= dt * speed
         this.rattan2.x -= dt * speed
         if (this.rattan1.x < -windowWidth) {
@@ -403,14 +396,14 @@ cc.Class({
         }
     },
 
-    moveNodeScroll(dt,speed){
+    moveNodeScroll(dt, speed) {
         var i
         for (i = 0; i < this.gameMoveNodeArray.length; i++) {
             this.gameMoveNodeArray[i].x -= dt * speed;
             if (this.gameMoveNodeArray[i].x < -windowWidth / 2 - 100) {
-                console.log("删除节点", this.gameMoveNodeArray[i])
+                //console.log("删除节点", this.gameMoveNodeArray[i])
                 this.gameMoveNodeArray[i].destroy()
-                this.gameMoveNodeArray.splice(i,1)
+                this.gameMoveNodeArray.splice(i, 1)
                 i--;
             }
         }

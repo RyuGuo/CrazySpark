@@ -63,7 +63,7 @@ cc.Class({
                 if (other.node.collisionCounter == 0) {
                     other.node.collisionCounter += 1
                     this.node.game.gainScore(10)
-                    Global.skillExp[Global.skillChoose].exp += 1
+                    Global.skillExp[Global.skillChoose].exp += 10
                     this.gainEnergy(1/this.getEnergy)
                     this.node.game.removeNodeFormMoveArray(other.node)
                     other.node.getComponent("Bananna").eatBananna()
