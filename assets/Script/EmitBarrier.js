@@ -14,7 +14,7 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
-        
+        speed: 2
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -23,7 +23,7 @@ cc.Class({
     },
 
     emit() {
-        var emitAction = cc.moveBy(2, cc.v2(-1400, 0));
+        var emitAction = cc.moveBy(this.speed, cc.v2(-1400, 0));
         this.node.runAction(emitAction);
     },
 

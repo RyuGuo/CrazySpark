@@ -18,6 +18,7 @@ cc.Class({
 
     properties: {
         initSpeed: 300,
+        maxSpeed: 900,
         speedup: 10,
         difficult: 1000,
         bonusDuration: 200,
@@ -104,6 +105,14 @@ cc.Class({
             type: cc.Node
         },
         rattan2: {
+            default: null,
+            type: cc.Node
+        },
+        ground1: {
+            default: null,
+            type: cc.Node
+        },
+        ground2: {
             default: null,
             type: cc.Node
         },
@@ -302,11 +311,12 @@ cc.Class({
 
     update(dt) {
         this.rattanScroll(dt, this.speed)
+        this.groundScroll(dt,this.speed)
         this.moveNodeScroll(dt, this.speed)
-        this.bgScroll(dt, this.speed)
+        this.bgScroll(dt, this.speed/2.5)
         this.itemScroll(dt, this.speed)
-        this.speed += dt * this.speedup;
-
+        //this.speed += dt * this.speedup;
+        this.speed += dt*(this.maxSpeed-this.speed)*0.01
     },
 
     bgScroll(dt, speed) {
@@ -393,6 +403,17 @@ cc.Class({
         }
         if (this.rattan2.x < -windowWidth) {
             this.rattan2.x = windowWidth + this.rattan1.x
+        }
+    },
+
+    groundScroll(dt, speed) {
+        this.ground1.x -= dt * speed
+        this.ground2.x -= dt * speed
+        if (this.ground1.x < -windowWidth) {
+            this.ground1.x = windowWidth + this.ground2.x
+        }
+        if (this.ground2.x < -windowWidth) {
+            this.ground2.x = windowWidth + this.ground1.x
         }
     },
 

@@ -156,7 +156,7 @@ cc.Class({
     },
 
     onExitButtonCallBack() {
-        cc.director.end();
+        cc.game.end();
     },
 
     start() {
